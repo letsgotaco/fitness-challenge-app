@@ -8,8 +8,9 @@ app.use(express.json());
 
 let connection = mysql.createConnection({
     host: 'localhost',
+    port: 3307,
     user: 'root',
-    password: '',
+    password: 'rootpass',
     database: 'databank-fitness-challenge-app',
 });
 

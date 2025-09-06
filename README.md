@@ -6,7 +6,13 @@ Bei diesem Projekt der BBS 1 soll eine Webanwendung entwickelt werden, die es kl
 
 ## Datenbank starten
 
-Die Datenbank wurde mir PHPMyAdmin erstellt und läuft unter `http://localhost/phpmyadmin/index.php`.
+Die Datenbank wurde mir PHPMyAdmin erstellt und läuft im Docker-Container unter `http://localhost:8080`. Starte den Docker-Container mit den folgenden Befehlen im Terminal:
+
+```
+cd Docker
+docker-compose up -d
+```
+
 Um mit der Datenbank eine erfolgreiche Verbindung aufzubauen, führe den folgenden Befehl im Terminal aus:
 
 ```
