@@ -4,7 +4,7 @@ services:
     db:
         image: mysql:8.0
         container_name: databank
-        restart: always
+        restart: always # container restarts automatically
         environment:
             MYSQL_DATABASE: databank-fitness-challenge-app
             MYSQL_USER: root
@@ -17,13 +17,14 @@ services:
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
         container_name: phpmyadmin
-        restart: always
+        restart: always # container restarts automatically
         environment:
             PMA_HOST: db
+            # DO NOT CHANGE: Login data for PHPMyAdmin
             PMA_USER: root
             PMA_PASSWORD: rootpass
         ports:
             - '8080:80'
 
 volumes:
-    db_data:
+    db_data: # Volume to save data, even when container is deleted
