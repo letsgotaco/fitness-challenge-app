@@ -1,44 +1,139 @@
 <script>
+import bcrypt from 'bcryptjs';
+
 export default {
     data() {
         return {
             errorMessage: '',
+            successMessage: '',
             emailInput: '',
             passwordInput: '',
+            usernameInput: '',
+            correctInput: true,
+            userRegisitered: false,
         };
     },
     methods: {
         validateUserInput() {
-            if (this.emailInput.length === 0 || this.passwordInput.length === 0) {
+            if (
+                this.emailInput.length === 0 ||
+                this.passwordInput.length === 0 ||
+                this.usernameInput.length === 0
+            ) {
                 this.errorMessage = 'Bitte fülle alle Felder aus!';
+                this.correctInput = false;
                 return;
             } else {
+                this.correctInput = true;
                 this.errorMessage = '';
             }
 
             const emailRegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!this.emailInput.match(emailRegExp)) {
                 this.errorMessage = 'Falsches E-Mail Format!';
+                this.correctInput = false;
+                return;
             } else {
+                this.correctInput = true;
                 this.errorMessage = '';
             }
         },
         login() {
             this.validateUserInput();
 
-            console.log('login');
+            if (this.correctInput) {
+                console.log('login');
+            }
         },
         register() {
             this.validateUserInput();
 
-            console.log('register');
+            if (this.correctInput) {
+                fetch('http://localhost:3000/getUser')
+                    .then(res => {
+                        if (res.ok) {
+                            return res.json();
+                        }
+                    })
+                    .then(async data => {
+                        if (data.length === 0) {
+                            let passwordHash = await this.hashPassword(this.passwordInput, 10);
+
+                            fetch('http://localhost:3000/registerUser', {
+                                method: 'POST',
+                                headers: {
+                                    'Access-Control-Allow-Origin': '*',
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    username: this.usernameInput,
+                                    email: this.emailInput,
+                                    password_hash: passwordHash,
+                                }).then(res => {
+                                    if (res.ok) {
+                                        this.successMessage = 'Nutzer erfolgreich registriert!';
+                                    }
+                                }),
+                            }).catch(error => {
+                                console.error(error);
+                                return;
+                            });
+                        } else {
+                            for (let i = 0; i < data.length; i++) {
+                                console.log(data[i]);
+                                if (data[i].email === this.emailInput) {
+                                    this.errorMessage = 'Der Nutzer ist schon registriert!';
+                                    this.userRegisitered = true;
+                                    break;
+                                }
+                            }
+
+                            if (!this.userRegisitered) {
+                                let passwordHash = await this.hashPassword(this.passwordInput, 10);
+
+                                fetch('http://localhost:3000/registerUser', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Access-Control-Allow-Origin': '*',
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({
+                                        username: this.usernameInput,
+                                        email: this.emailInput,
+                                        password_hash: passwordHash,
+                                    }),
+                                })
+                                    .then(res => {
+                                        if (res.ok) {
+                                            this.successMessage = 'Nutzer erfolgreich registriert!';
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error(error);
+                                        return;
+                                    });
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            }
+        },
+        async hashPassword(plainPassword, saltRounds = 10) {
+            try {
+                const hash = await bcrypt.hash(plainPassword, saltRounds);
+                return hash;
+            } catch (err) {
+                console.error('Fehler beim Hashen:', err);
+                throw err;
+            }
         },
     },
 };
 </script>
 
 <template>
-    <!-- <router-link to="/dashboard">Zum Dashboard</router-link> -->
     <div class="container">
         <div class="form-box">
             <h1 class="title">FitFriends - Gemeinsam Challenges meistern</h1>
@@ -49,12 +144,16 @@ export default {
                 <label for="password">Passwort</label>
                 <input type="password" id="password" placeholder="••••••••" v-model="this.passwordInput" />
 
+                <label for="name">Nutzername</label>
+                <input id="name" placeholder="Dein Name" v-model="this.usernameInput" />
+
                 <div class="button-group">
                     <button type="button" class="button login" @click="login">Login</button>
                     <button type="button" class="button register" @click="register">Registrieren</button>
                 </div>
 
                 <div class="error-message">{{ errorMessage }}</div>
+                <div class="success-message">{{ successMessage }}</div>
             </form>
         </div>
     </div>
@@ -64,6 +163,12 @@ export default {
 .error-message {
     font-size: var(--font-size-text);
     color: var(--red);
+    padding: 20px 0 0 20%;
+}
+
+.success-message {
+    font-size: var(--font-size-text);
+    color: var(--light-blue);
     padding: 20px 0 0 20%;
 }
 

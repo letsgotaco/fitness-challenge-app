@@ -1,10 +1,12 @@
 const express = require('express');
 const mysql = require('mysql2');
+const cors = require('cors');
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
+app.use(cors());
 
 let connection = mysql.createConnection({
     host: 'localhost',
@@ -24,6 +26,33 @@ app.get('/', (req, res) => {
         }
         res.send('Verbindung erfolgreich! Aktuelle Zeit: ' + rows[0].currentTime);
     });
+});
+
+// API-Endpoint for registration of user
+app.get('/getUser', (req, res) => {
+    connection.query('SELECT * FROM `User`', (err, rows) => {
+        if (err) {
+            console.error(err);
+        } else {
+            res.json(rows);
+        }
+    });
+});
+
+// API-Endpoint to register new User
+app.post('/registerUser', (req, res) => {
+    let { username, email, password_hash } = req.body;
+    connection.query(
+        'INSERT INTO `User` (`username`, `email`, `password_hash`) VALUES (?, ?, ?)',
+        [username, email, password_hash],
+        (err, result) => {
+            if (err) {
+                console.error(err);
+            } else {
+                res.send(req.body);
+            }
+        },
+    );
 });
 
 app.listen(port, () => {
