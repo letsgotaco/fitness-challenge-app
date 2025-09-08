@@ -12,7 +12,7 @@
     --light-blue: #38bdf8;
     --light-blue-2: #3b82f6;
     --black: #000000;
-
+    --red: #ff0000;
     --font-size-text: 19px;
     --font-size-small-text: 16px;
 }
