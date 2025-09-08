@@ -11,6 +11,7 @@ export default {
             usernameInput: '',
             correctInput: true,
             userRegisitered: false,
+            userAccountExistend: false,
         };
     },
     methods: {
@@ -42,7 +43,29 @@ export default {
             this.validateUserInput();
 
             if (this.correctInput) {
-                console.log('login');
+                fetch('http://localhost:3000/getUser')
+                    .then(res => {
+                        if (res.ok) {
+                            return res.json();
+                        }
+                    })
+                    .then(async data => {
+                        for (let i = 0; i < data.length; i++) {
+                            if (data[i].email === this.emailInput) {
+                                this.comparePassword(this.passwordInput, data[i].password_hash);
+                                this.userAccountExistend = true;
+                            }
+                        }
+
+                        if (!this.userAccountExistend) {
+                            this.errorMessage = 'Nutzer existiert nicht!';
+                        } else {
+                            this.errorMessage = '';
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
             }
         },
         register() {
@@ -80,7 +103,6 @@ export default {
                             });
                         } else {
                             for (let i = 0; i < data.length; i++) {
-                                console.log(data[i]);
                                 if (data[i].email === this.emailInput) {
                                     this.errorMessage = 'Der Nutzer ist schon registriert!';
                                     this.userRegisitered = true;
@@ -128,6 +150,22 @@ export default {
                 console.error('Fehler beim Hashen:', err);
                 throw err;
             }
+        },
+        comparePassword(plainPassword, hashPassword) {
+            bcrypt.compare(plainPassword, hashPassword, (err, result) => {
+                if (err) {
+                    console.error('Fehler beim Vergleichen des Passworts:', err);
+                    this.errorMessage = 'Ein Fehler ist aufgetreten.';
+                    return;
+                }
+
+                if (result) {
+                    this.successMessage = 'Du wirst eingeloggt!';
+                    this.$router.push('/dashboard');
+                } else {
+                    this.successMessage = 'Falsches Passwort!';
+                }
+            });
         },
     },
 };
