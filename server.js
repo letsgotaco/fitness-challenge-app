@@ -104,6 +104,28 @@ app.get('/getAllBadges', (req, res) => {
     });
 });
 
+// API-Endpoint for all Challenge counter
+app.get('/getChallengeCounter/:user_id', async (req, res) => {
+    const { user_id } = req.params;
+
+    try {
+        connection.execute(
+            'SELECT COUNT(*) AS total FROM `Challenge_Participant` WHERE `user_id` = ?',
+            [user_id],
+            (err, rows) => {
+                if (err) {
+                    return res.status(500).json({ error: err.message });
+                }
+
+                const count = rows[0].total;
+                res.json({ count });
+            },
+        );
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 app.listen(port, () => {
     console.log('server runs on http://localhost:' + port);
 });

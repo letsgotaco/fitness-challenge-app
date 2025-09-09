@@ -1,4 +1,37 @@
-<script setup></script>
+<script>
+export default {
+    data() {
+        return {
+            userId: sessionStorage.getItem('user_id'),
+            challengeCounter: 0,
+        };
+    },
+    methods: {
+        setUserChallengCounter() {
+            fetch(`http://localhost:3000/getChallengeCounter/${encodeURIComponent(this.userId)}`)
+                .then(res => {
+                    if (res.ok) {
+                        return res.json();
+                    }
+                })
+                .then(data => {
+                    this.challengeCounter = data.count;
+
+                    if (!window.location.hash) {
+                        window.location = window.location + '#loaded';
+                        window.location.reload();
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        },
+    },
+    mounted() {
+        this.setUserChallengCounter();
+    },
+};
+</script>
 
 <template>
     <div class="dashboard-container">
@@ -23,8 +56,7 @@
 
         <div class="active-challenges-card">
             <h3>Aktive Challenges:</h3>
-            <!-- To-Do: Set dynamic number -->
-            <span class="challenge-counter">4</span>
+            <span class="challenge-counter">{{ this.challengeCounter }}</span>
         </div>
 
         <div class="groups">
