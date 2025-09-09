@@ -5,17 +5,19 @@
         <header>
             <nav>
                 <h1>Dashboard</h1>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" class="user-icon">
-                    <defs>
-                        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color: #4facfe; stop-opacity: 1" />
-                            <stop offset="100%" style="stop-color: #00f2fe; stop-opacity: 1" />
-                        </linearGradient>
-                    </defs>
-                    <circle cx="64" cy="64" r="64" fill="url(#grad)" />
-                    <circle cx="64" cy="40" r="20" fill="white" />
-                    <path d="M32 96c0-17.67 14.33-32 32-32s32 14.33 32 32H32z" fill="white" />
-                </svg>
+                <router-link to="/profile">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" class="user-icon">
+                        <defs>
+                            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color: #4facfe; stop-opacity: 1" />
+                                <stop offset="100%" style="stop-color: #00f2fe; stop-opacity: 1" />
+                            </linearGradient>
+                        </defs>
+                        <circle cx="64" cy="64" r="64" fill="url(#grad)" />
+                        <circle cx="64" cy="40" r="20" fill="white" />
+                        <path d="M32 96c0-17.67 14.33-32 32-32s32 14.33 32 32H32z" fill="white" />
+                    </svg>
+                </router-link>
             </nav>
         </header>
 
@@ -61,8 +63,6 @@
 }
 
 .dashboard-container {
-    max-width: 1200px;
-    margin: auto;
     display: flex;
     flex-direction: column;
     gap: 20px;

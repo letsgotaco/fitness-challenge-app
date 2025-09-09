@@ -186,9 +186,7 @@ export default {
                     }
                 })
                 .then(data => {
-                    console.log(data);
                     sessionStorage.setItem('user_id', data.user_id);
-                    console.log('Gespeicherte ID:', sessionStorage.getItem('user_id'));
                 })
                 .catch(error => {
                     console.error(error);

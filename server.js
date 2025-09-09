@@ -55,9 +55,10 @@ app.post('/registerUser', (req, res) => {
     );
 });
 
-// API-Endpoint to user_id from user thats currently logged in
+// API-Endpoint to user_id from the logged in user
 app.get('/getUserId/:email', async (req, res) => {
     const { email } = req.params;
+
     try {
         connection.execute('SELECT `user_id` FROM `User` WHERE `email` = ?', [email], (err, rows) => {
             if (err) {
@@ -73,6 +74,34 @@ app.get('/getUserId/:email', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+});
+
+// API-Endpoint for badges of the logged in user
+app.get('/getBadges/:user_id', async (req, res) => {
+    const { user_id } = req.params;
+
+    try {
+        connection.execute('SELECT * FROM `User_Badge` WHERE `user_id` = ?', [user_id], (err, rows) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+
+            res.json(rows);
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// API-Endpoint for all badges
+app.get('/getAllBadges', (req, res) => {
+    connection.query('SELECT * FROM `Badge`', (err, rows) => {
+        if (err) {
+            console.error(err);
+        } else {
+            res.json(rows);
+        }
+    });
 });
 
 app.listen(port, () => {

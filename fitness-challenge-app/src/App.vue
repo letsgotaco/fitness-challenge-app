@@ -30,7 +30,7 @@
 
 body {
     background-color: var(--white);
-    margin: 0;
+    margin: 0 20px 0 20px;
     padding: 0;
     font-family: Arial, sans-serif;
 }
