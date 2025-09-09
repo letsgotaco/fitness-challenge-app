@@ -58,6 +58,7 @@ export default {
                                 );
 
                                 if (result) {
+                                    this.getUserId();
                                     this.$router.push('/dashboard');
                                 }
 
@@ -176,6 +177,22 @@ export default {
                     }
                 });
             });
+        },
+        getUserId() {
+            fetch(`http://localhost:3000/getUserId/${encodeURIComponent(this.emailInput)}`)
+                .then(res => {
+                    if (res.ok) {
+                        return res.json();
+                    }
+                })
+                .then(data => {
+                    console.log(data);
+                    sessionStorage.setItem('user_id', data.user_id);
+                    console.log('Gespeicherte ID:', sessionStorage.getItem('user_id'));
+                })
+                .catch(error => {
+                    console.error(error);
+                });
         },
     },
 };

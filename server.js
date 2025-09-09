@@ -55,6 +55,26 @@ app.post('/registerUser', (req, res) => {
     );
 });
 
+// API-Endpoint to user_id from user thats currently logged in
+app.get('/getUserId/:email', async (req, res) => {
+    const { email } = req.params;
+    try {
+        connection.execute('SELECT `user_id` FROM `User` WHERE `email` = ?', [email], (err, rows) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+
+            if (rows.length === 0) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+
+            res.json(rows[0]);
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 app.listen(port, () => {
     console.log('server runs on http://localhost:' + port);
 });
