@@ -52,7 +52,15 @@ export default {
                     .then(async data => {
                         for (let i = 0; i < data.length; i++) {
                             if (data[i].email === this.emailInput) {
-                                this.comparePassword(this.passwordInput, data[i].password_hash);
+                                const result = await this.comparePassword(
+                                    this.passwordInput,
+                                    data[i].password_hash,
+                                );
+
+                                if (result) {
+                                    this.$router.push('/dashboard');
+                                }
+
                                 this.userAccountExistend = true;
                             }
                         }
@@ -152,19 +160,21 @@ export default {
             }
         },
         comparePassword(plainPassword, hashPassword) {
-            bcrypt.compare(plainPassword, hashPassword, (err, result) => {
-                if (err) {
-                    console.error('Fehler beim Vergleichen des Passworts:', err);
-                    this.errorMessage = 'Ein Fehler ist aufgetreten.';
-                    return;
-                }
-
-                if (result) {
-                    this.successMessage = 'Du wirst eingeloggt!';
-                    this.$router.push('/dashboard');
-                } else {
-                    this.successMessage = 'Falsches Passwort!';
-                }
+            return new Promise((resolve, reject) => {
+                bcrypt.compare(plainPassword, hashPassword, (err, result) => {
+                    if (err) {
+                        console.error('Fehler beim Vergleichen des Passworts:', err);
+                        this.errorMessage = 'Ein Fehler ist aufgetreten.';
+                        reject(err);
+                    } else {
+                        if (result) {
+                            this.successMessage = 'Du wirst eingeloggt!';
+                        } else {
+                            this.successMessage = 'Falsches Passwort!';
+                        }
+                        resolve(result);
+                    }
+                });
             });
         },
     },
