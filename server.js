@@ -104,6 +104,38 @@ app.get('/getAllBadges', (req, res) => {
     });
 });
 
+// API-Endpoint for challenges of the logged in user
+app.get('/getChallenges/:user_id', async (req, res) => {
+    const { user_id } = req.params;
+
+    try {
+        connection.execute(
+            "SELECT * FROM Challenge_Participant WHERE user_id = ? AND total_progress = '100%'",
+            [user_id],
+            (err, rows) => {
+                if (err) {
+                    return res.status(500).json({ error: err.message });
+                }
+
+                res.json(rows);
+            },
+        );
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// API-Endpoint for all Challenges
+app.get('/getAllChallenges', (req, res) => {
+    connection.query('SELECT * FROM `Challenge`', (err, rows) => {
+        if (err) {
+            console.error(err);
+        } else {
+            res.json(rows);
+        }
+    });
+});
+
 // API-Endpoint for all Challenge counter
 app.get('/getChallengeCounter/:user_id', async (req, res) => {
     const { user_id } = req.params;
