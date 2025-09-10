@@ -26,6 +26,11 @@ export default {
                     console.error(error);
                 });
         },
+        setGroupname(event) {
+            sessionStorage.setItem('groupname', event.target.id);
+
+            this.$router.push('/group');
+        },
     },
     mounted() {
         this.setUserChallengCounter();
@@ -68,7 +73,8 @@ export default {
                     <div class="progress"></div>
                 </div>
                 <p class="progress-text">Team Fortschritt: 65%</p>
-                <button class="group-button">Zur Gruppe</button>
+                <!-- id is used to set groupname in groupview component. DO NOT REMOVE -->
+                <button class="group-button" id="Freunde Laufclub" @click="setGroupname">Zur Gruppe</button>
             </div>
 
             <div class="new-group-card">
@@ -83,13 +89,6 @@ export default {
 </template>
 
 <style scoped>
-.user-icon {
-    margin-top: 15px;
-    width: 60px;
-    height: 60px;
-    cursor: pointer;
-}
-
 .challenge-counter {
     font-size: var(--font-size-big-text);
 }
@@ -98,13 +97,6 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 20px;
-}
-
-header nav {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 
 .active-challenges-card {
@@ -149,7 +141,6 @@ header nav {
 }
 
 .group-button {
-    margin-top: auto;
     font-weight: var(--font-weight-bold);
     padding: 10px;
     background-color: var(--grey);
@@ -157,6 +148,9 @@ header nav {
     border: none;
     border-radius: 10px;
     cursor: pointer;
+    font-size: var(--font-size-small-text);
+    text-align: center;
+    text-decoration: none;
 }
 
 .new-group-card {
@@ -174,6 +168,7 @@ header nav {
     border: none;
     padding: 10px;
     color: var(--white);
+    font-size: var(--font-size-small-text);
     font-weight: var(--font-weight-bold);
     border-radius: 10px;
     cursor: pointer;

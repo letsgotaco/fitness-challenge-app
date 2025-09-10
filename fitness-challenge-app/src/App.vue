@@ -34,4 +34,18 @@ body {
     padding: 0;
     font-family: Arial, sans-serif;
 }
+
+.user-icon {
+    margin-top: 15px;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+}
+
+header nav {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 </style>
