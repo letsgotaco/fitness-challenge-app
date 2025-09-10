@@ -170,6 +170,7 @@ export default {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
+    padding-top: 20px;
 }
 
 .badge-container {
@@ -193,7 +194,7 @@ export default {
 .profile-header {
     background: linear-gradient(to bottom right, var(--light-blue), var(--light-blue-2));
     color: var(--white);
-    padding: 10px;
+    padding: 20px;
     font-size: var(--font-size-big-text);
     border-radius: 20px;
 }
