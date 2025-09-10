@@ -4,6 +4,9 @@ export default {
         return {
             userId: sessionStorage.getItem('user_id'),
             challengeCounter: 0,
+            textPrivateGroups: '',
+            textPrivateGroups2: '',
+            groups: [],
         };
     },
     methods: {
@@ -31,9 +34,55 @@ export default {
 
             this.$router.push('/group');
         },
+        displayPrivateGroups() {
+            fetch(`http://localhost:3000/getPrivateGroups/${encodeURIComponent(this.userId)}`)
+                .then(res => {
+                    if (res.ok) {
+                        return res.json();
+                    }
+                })
+                .then(data => {
+                    let userGroups = [];
+                    for (let i = 0; i < data.length; i++) {
+                        userGroups.push(data[i].group_id);
+                    }
+
+                    if (data.length === 0) {
+                        this.textPrivateGroups = 'Keine Gruppen gefunden!';
+                        this.textPrivateGroups2 =
+                            'Du bist aktuell in keiner privaten Gruppe. Damit hier deine privaten Gruppen auftauchen, musst du nur eine erstellen oder dich in eine andere Gruppe einladen lassen.';
+                    } else {
+                        fetch(`http://localhost:3000/getAllGroups`)
+                            .then(res => {
+                                if (res.ok) {
+                                    return res.json();
+                                }
+                            })
+                            .then(data => {
+                                for (let a = 0; a < userGroups.length; a++) {
+                                    for (let i = 0; i < data.length; i++) {
+                                        if (userGroups[a] === data[i].group_id) {
+                                            this.groups.push({
+                                                name: data[i].name,
+                                                description: data[i].description,
+                                            });
+                                        }
+                                    }
+                                }
+                            })
+                            .catch(error => {
+                                console.error(error);
+                            });
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        },
     },
     mounted() {
         this.setUserChallengCounter();
+        this.displayPrivateGroups();
     },
 };
 </script>
@@ -65,23 +114,21 @@ export default {
         </div>
 
         <div class="groups">
-            <!-- To-Do: Set dynamic data -->
-            <div class="group">
-                <h3>Freunde Laufclub</h3>
-                <p>3 aktive Challenges</p>
-                <div class="progress-bar">
-                    <div class="progress"></div>
-                </div>
-                <p class="progress-text">Team Fortschritt: 65%</p>
+            <div class="no-group-found-container group" v-if="this.textPrivateGroups.length > 0">
+                <h3>{{ this.textPrivateGroups }}</h3>
+                <span>{{ this.textPrivateGroups2 }}</span>
+            </div>
+            <div class="group" v-for="(data, index) in this.groups" :key="index">
+                <h3>{{ data.name }}</h3>
+                <span>{{ data.description }}</span>
+
                 <!-- id is used to set groupname in groupview component. DO NOT REMOVE -->
-                <button class="group-button" id="Freunde Laufclub" @click="setGroupname">Zur Gruppe</button>
+                <button class="group-button" :id="data.name" @click="setGroupname">Zur Gruppe</button>
             </div>
 
             <div class="new-group-card">
-                <div>
-                    <h3>Neue Gruppe</h3>
-                    <p>Erstelle eine private Gruppe</p>
-                </div>
+                <h3>Neue Gruppe</h3>
+                <span>Erstelle eine private Gruppe</span>
                 <button class="create-group-button">+ Gruppe erstellen</button>
             </div>
         </div>
@@ -118,26 +165,14 @@ export default {
     color: var(--white);
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    gap: 15px;
     background: linear-gradient(to bottom right, var(--light-blue), var(--light-blue-2));
-}
-
-.progress-bar {
-    background-color: var(--grey);
-    border-radius: 10px;
-    height: 10px;
-    margin: 10px 0;
-}
-
-.progress {
-    background: linear-gradient(to right, var(--light-green-2), var(--light-green));
-    height: 100%;
-    border-radius: 10px;
-    width: 65%;
-}
-
-.progress-text {
-    color: var(--white);
     font-size: var(--font-size-small-text);
+}
+
+.no-group-found-container {
+    width: 350px;
 }
 
 .group-button {
@@ -161,6 +196,7 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    gap: 15px;
 }
 
 .create-group-button {

@@ -136,6 +136,38 @@ app.get('/getAllChallenges', (req, res) => {
     });
 });
 
+// API-Endpoint for private groups of logged in user
+app.get('/getPrivateGroups/:user_id', async (req, res) => {
+    const { user_id } = req.params;
+
+    try {
+        connection.execute(
+            'SELECT * FROM `Private_Group_Member` WHERE `user_id` = ?',
+            [user_id],
+            (err, rows) => {
+                if (err) {
+                    return res.status(500).json({ error: err.message });
+                }
+
+                res.json(rows);
+            },
+        );
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// API-Endpoint for all Groups
+app.get('/getAllGroups', (req, res) => {
+    connection.query('SELECT * FROM `Private_Group`', (err, rows) => {
+        if (err) {
+            console.error(err);
+        } else {
+            res.json(rows);
+        }
+    });
+});
+
 // API-Endpoint for all Challenge counter
 app.get('/getChallengeCounter/:user_id', async (req, res) => {
     const { user_id } = req.params;
