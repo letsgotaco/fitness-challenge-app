@@ -146,6 +146,10 @@ export default {
                 })
                 .then(data => {
                     this.groupMember = data;
+
+                    if (this.groupMember.length === 0) {
+                        this.errorMessage = 'Keine Nutzer verfügbar!';
+                    }
                 })
                 .catch(error => {
                     console.error(error);
