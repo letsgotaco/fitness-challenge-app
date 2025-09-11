@@ -7,6 +7,16 @@ export default {
             textPrivateGroups: '',
             textPrivateGroups2: '',
             groups: [],
+            groupMember: [],
+            showPopUpForm: false,
+            showGroupMemberContainer: false,
+            groupname: '',
+            description: '',
+            correctInput: true,
+            errorMessage: '',
+            successMessage: '',
+            newGroupId: 0,
+            selectedGroupMember: [],
         };
     },
     methods: {
@@ -59,6 +69,9 @@ export default {
                                 }
                             })
                             .then(data => {
+                                // Reset Array for each function call
+                                this.groups = [];
+
                                 for (let a = 0; a < userGroups.length; a++) {
                                     for (let i = 0; i < data.length; i++) {
                                         if (userGroups[a] === data[i].group_id) {
@@ -78,6 +91,89 @@ export default {
                 .catch(error => {
                     console.error(error);
                 });
+        },
+        openAndClosePopUp() {
+            this.showPopUpForm = !this.showPopUpForm;
+            this.showGroupMemberContainer = false;
+        },
+        validateUserInput() {
+            if (this.description.length === 0 || this.groupname.length === 0) {
+                this.errorMessage = 'Bitte fülle alle Felder aus!';
+                this.correctInput = false;
+                return;
+            } else {
+                this.correctInput = true;
+                this.errorMessage = '';
+            }
+        },
+        createNewGroup() {
+            this.validateUserInput();
+
+            if (this.correctInput) {
+                fetch('http://localhost:3000/createGroup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: this.groupname,
+                        description: this.description,
+                        created_by: this.userId,
+                    }),
+                })
+                    .then(res => {
+                        if (res.ok) {
+                            return res.json();
+                        }
+                    })
+                    .then(data => {
+                        this.newGroupId = data.group_id;
+                        this.showGroupMemberContainer = true;
+                        this.successMessage = `Gruppe erfolgreich erstellt!`;
+                        this.getPossibleGroupMember();
+                    })
+                    .catch(error => {
+                        console.error('Fehler:', error);
+                    });
+            }
+        },
+        getPossibleGroupMember() {
+            fetch(`http://localhost:3000/getUser`)
+                .then(res => {
+                    if (res.ok) {
+                        return res.json();
+                    }
+                })
+                .then(data => {
+                    this.groupMember = data;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        },
+        addGroupMember() {
+            for (let i = 0; i < this.selectedGroupMember.length; i++) {
+                fetch('http://localhost:3000/addGroupMember', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        group_id: this.newGroupId,
+                        user_id: this.selectedGroupMember[i],
+                    }),
+                })
+                    .then(res => {
+                        if (res.ok) {
+                            this.successMessage = `Mitglieder erfolgreich hinzugefügt!`;
+                            this.displayPrivateGroups();
+                            return res.json();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fehler:', error);
+                    });
+            }
         },
     },
     mounted() {
@@ -129,13 +225,118 @@ export default {
             <div class="new-group-card">
                 <h3>Neue Gruppe</h3>
                 <span>Erstelle eine private Gruppe</span>
-                <button class="create-group-button">+ Gruppe erstellen</button>
+                <button class="create-group-button" @click="openAndClosePopUp">+ Gruppe erstellen</button>
             </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="popupOverlay" v-if="this.showPopUpForm">
+        <div class="popup">
+            <button class="close-btn close-pop-up-button" @click="openAndClosePopUp">X</button>
+            <h2>Neue Gruppe erstellen</h2>
+            <form>
+                <label for="groupname">Gruppenname</label>
+                <input type="text" id="groupname" name="groupname" v-model="this.groupname" />
+
+                <label for="description">Beschreibung</label>
+                <textarea id="description" name="description" rows="4" v-model="this.description"></textarea>
+
+                <button type="button" class="create-new-group-button" @click="createNewGroup">
+                    Speichern
+                </button>
+            </form>
+
+            <div v-if="showGroupMemberContainer">
+                <h2>Mitglieder hinzufügen</h2>
+
+                <div class="group-member-container">
+                    <div
+                        v-for="(data, index) in this.groupMember"
+                        :key="index"
+                        class="group-member-option-container"
+                    >
+                        <input type="checkbox" :value="data.user_id" v-model="this.selectedGroupMember" />
+                        <span>{{ data.username }}</span>
+                    </div>
+                </div>
+
+                <button type="button" class="create-new-group-button" @click="addGroupMember">
+                    Speichern
+                </button>
+            </div>
+
+            <div class="error-message">{{ this.errorMessage }}</div>
+            <div class="success-message">{{ this.successMessage }}</div>
         </div>
     </div>
 </template>
 
 <style scoped>
+.group-member-container {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 20px 0 20px 0;
+}
+
+.group-member-option-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.create-new-group-button {
+    margin-left: 35%;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--black-transparent);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup {
+    background: var(--white);
+    padding: 20px 30px;
+    border-radius: 12px;
+    max-width: 90%;
+}
+
+.popup label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+.popup input,
+.popup textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--grey);
+    border-radius: 8px;
+    font-size: var(--font-size-small-text);
+}
+
+.popup button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(to bottom right, var(--light-blue), var(--light-blue-2));
+    color: var(--white);
+    font-size: var(--font-size-small-text);
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.close-pop-up-button {
+    margin-left: 90%;
+}
+
 .challenge-counter {
     font-size: var(--font-size-big-text);
 }

@@ -190,6 +190,47 @@ app.get('/getChallengeCounter/:user_id', async (req, res) => {
     }
 });
 
+// API-Endpoint to create new Group
+app.post('/createGroup', (req, res) => {
+    let { name, description, created_by } = req.body;
+
+    connection.query(
+        'INSERT INTO `Private_Group` (`name`, `description`, `created_by`) VALUES (?, ?, ?)',
+        [name, description, created_by],
+        (err, result) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send({ error: 'Database error' });
+            } else {
+                res.send({
+                    group_id: result.insertId,
+                    name,
+                    description,
+                    created_by,
+                });
+            }
+        },
+    );
+});
+
+// API-Endpoint to add new group member
+app.post('/addGroupMember', (req, res) => {
+    let { group_id, user_id } = req.body;
+
+    connection.query(
+        'INSERT INTO `Private_Group_Member` (`group_id`, `user_id`) VALUES (?, ?)',
+        [group_id, user_id],
+        (err, result) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send({ error: 'Database error' });
+            } else {
+                res.send(req.body);
+            }
+        },
+    );
+});
+
 app.listen(port, () => {
     console.log('server runs on http://localhost:' + port);
 });

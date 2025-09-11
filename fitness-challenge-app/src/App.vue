@@ -15,6 +15,7 @@
     --light-blue: #38bdf8;
     --light-blue-2: #3b82f6;
     --black: #000000;
+    --black-transparent: rgba(0, 0, 0, 0.499) 0;
     --red: #ff0000;
 
     /* font-sizes */
@@ -51,5 +52,17 @@ h1,
 h2,
 h3 {
     margin: 0;
+}
+
+.error-message {
+    font-size: var(--font-size-text);
+    color: var(--red);
+    padding: 20px 0 0 20%;
+}
+
+.success-message {
+    font-size: var(--font-size-text);
+    color: var(--light-blue);
+    padding: 20px 0 0 20%;
 }
 </style>

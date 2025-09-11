@@ -1,6 +1,4 @@
 <script>
-import { split } from 'postcss/lib/list';
-
 export default {
     data() {
         return {

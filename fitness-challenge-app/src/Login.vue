@@ -215,26 +215,14 @@ export default {
                     <button type="button" class="button register" @click="register">Registrieren</button>
                 </div>
 
-                <div class="error-message">{{ errorMessage }}</div>
-                <div class="success-message">{{ successMessage }}</div>
+                <div class="error-message">{{ this.errorMessage }}</div>
+                <div class="success-message">{{ this.successMessage }}</div>
             </form>
         </div>
     </div>
 </template>
 
 <style scoped>
-.error-message {
-    font-size: var(--font-size-text);
-    color: var(--red);
-    padding: 20px 0 0 20%;
-}
-
-.success-message {
-    font-size: var(--font-size-text);
-    color: var(--light-blue);
-    padding: 20px 0 0 20%;
-}
-
 .container {
     margin-top: 50px;
     background-color: var(--white);
