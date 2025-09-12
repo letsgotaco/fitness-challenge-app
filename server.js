@@ -231,6 +231,76 @@ app.post('/addGroupMember', (req, res) => {
     );
 });
 
+// API-Endpoint for all posts of a group
+app.get('/getPosts/:group_id', async (req, res) => {
+    const { group_id } = req.params;
+
+    try {
+        connection.execute('SELECT * FROM `Feed_Post` WHERE `group_id` = ?', [group_id], (err, rows) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+
+            res.json(rows);
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// API-Endpoint for all comments of a post
+app.get('/getComments/:post_id', async (req, res) => {
+    const { post_id } = req.params;
+
+    try {
+        connection.execute('SELECT * FROM `Comment` WHERE `post_id` = ?', [post_id], (err, rows) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+
+            res.json(rows);
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// API-Endpoint to add new post
+app.post('/addPost', (req, res) => {
+    let { group_id, user_id, content } = req.body;
+
+    connection.query(
+        'INSERT INTO `Feed_Post` (`group_id`, `user_id`,`content`) VALUES (?, ?, ?)',
+        [group_id, user_id, content],
+        (err, result) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send({ error: 'Database error' });
+            } else {
+                res.send(req.body);
+            }
+        },
+    );
+});
+
+// API-Endpoint to add new comment
+app.post('/addComment', (req, res) => {
+    let { post_id, user_id, content } = req.body;
+
+    connection.query(
+        'INSERT INTO `Comment` (`post_id`, `user_id`,`content`) VALUES (?, ?, ?)',
+        [post_id, user_id, content],
+        (err, result) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send({ error: 'Database error' });
+            } else {
+                res.send(req.body);
+            }
+        },
+    );
+});
+2;
 app.listen(port, () => {
     console.log('server runs on http://localhost:' + port);
 });

@@ -25,6 +25,7 @@
 
     /* font-weight */
     --font-weight-bold: 900;
+    --font-weight-normal: 400;
 }
 
 body {
@@ -64,5 +65,57 @@ h3 {
     font-size: var(--font-size-text);
     color: var(--light-blue);
     padding: 20px 0 0 20%;
+}
+
+textarea {
+    resize: none;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--black-transparent);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup {
+    background: var(--white);
+    padding: 20px 30px;
+    border-radius: 12px;
+    max-width: 90%;
+}
+
+.popup label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+.popup input,
+.popup textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--grey);
+    border-radius: 8px;
+    font-size: var(--font-size-small-text);
+}
+
+.popup button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(to bottom right, var(--light-blue), var(--light-blue-2));
+    color: var(--white);
+    font-size: var(--font-size-small-text);
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.close-pop-up-button {
+    margin-left: 90%;
 }
 </style>

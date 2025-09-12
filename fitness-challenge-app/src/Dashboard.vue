@@ -41,6 +41,7 @@ export default {
         },
         setGroupname(event) {
             sessionStorage.setItem('groupname', event.target.id);
+            sessionStorage.setItem('groupId', event.target.value);
 
             this.$router.push('/group');
         },
@@ -78,6 +79,7 @@ export default {
                                             this.groups.push({
                                                 name: data[i].name,
                                                 description: data[i].description,
+                                                id: data[i].group_id,
                                             });
                                         }
                                     }
@@ -223,7 +225,9 @@ export default {
                 <span>{{ data.description }}</span>
 
                 <!-- id is used to set groupname in groupview component. DO NOT REMOVE -->
-                <button class="group-button" :id="data.name" @click="setGroupname">Zur Gruppe</button>
+                <button class="group-button" :id="data.name" :value="data.id" @click="setGroupname">
+                    Zur Gruppe
+                </button>
             </div>
 
             <div class="new-group-card">
@@ -234,9 +238,9 @@ export default {
         </div>
     </div>
 
-    <div class="overlay" id="popupOverlay" v-if="this.showPopUpForm">
+    <div class="overlay" v-if="this.showPopUpForm">
         <div class="popup">
-            <button class="close-btn close-pop-up-button" @click="openAndClosePopUp">X</button>
+            <button class="close-pop-up-button" @click="openAndClosePopUp">X</button>
             <h2>Neue Gruppe erstellen</h2>
             <form>
                 <label for="groupname">Gruppenname</label>
@@ -291,54 +295,6 @@ export default {
 
 .create-new-group-button {
     margin-left: 35%;
-}
-
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--black-transparent);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.popup {
-    background: var(--white);
-    padding: 20px 30px;
-    border-radius: 12px;
-    max-width: 90%;
-}
-
-.popup label {
-    display: block;
-    margin: 10px 0 5px;
-}
-
-.popup input,
-.popup textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--grey);
-    border-radius: 8px;
-    font-size: var(--font-size-small-text);
-}
-
-.popup button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 8px;
-    background: linear-gradient(to bottom right, var(--light-blue), var(--light-blue-2));
-    color: var(--white);
-    font-size: var(--font-size-small-text);
-    cursor: pointer;
-    margin-bottom: 15px;
-}
-
-.close-pop-up-button {
-    margin-left: 90%;
 }
 
 .challenge-counter {
