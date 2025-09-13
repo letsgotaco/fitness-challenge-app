@@ -300,7 +300,35 @@ app.post('/addComment', (req, res) => {
         },
     );
 });
-2;
+
+// API-Endpoint for challenges of a certain group
+app.get('/getGroupChallenges/:group_id', async (req, res) => {
+    const { group_id } = req.params;
+
+    try {
+        connection.execute('SELECT * FROM `Challenge` WHERE group_id = ?', [group_id], (err, rows) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+
+            res.json(rows);
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// API-Endpoint for all Challenge Participants
+app.get('/getAllChallengeParticipants', (req, res) => {
+    connection.query('SELECT * FROM `Challenge_Participant`', (err, rows) => {
+        if (err) {
+            console.error(err);
+        } else {
+            res.json(rows);
+        }
+    });
+});
+
 app.listen(port, () => {
     console.log('server runs on http://localhost:' + port);
 });
