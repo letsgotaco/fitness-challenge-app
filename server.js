@@ -329,6 +329,22 @@ app.get('/getAllChallengeParticipants', (req, res) => {
     });
 });
 
+// API-Endpoint to create new Challenge in a group
+app.post('/createChallenge', (req, res) => {
+    let { group_id, title, description, target, end_date, created_by } = req.body;
+    connection.query(
+        'INSERT INTO `Challenge` (`group_id`, `title`, `description`, `target`, `end_date`, `created_by`) VALUES (?, ?, ?, ?, ?, ?)',
+        [group_id, title, description, target, end_date, created_by],
+        (err, result) => {
+            if (err) {
+                console.error(err);
+            } else {
+                res.send(req.body);
+            }
+        },
+    );
+});
+
 app.listen(port, () => {
     console.log('server runs on http://localhost:' + port);
 });

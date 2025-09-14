@@ -4,7 +4,7 @@ export default {
         return {
             errorMessage: '',
             successMessage: '',
-            errorMessage2: '',
+            errorMessagePopUp: '',
             successMessage2: '',
             contentPost: '',
             contentComment: '',
@@ -28,14 +28,14 @@ export default {
                 this.errorMessage = '';
             }
         },
-        validateUserInput2() {
+        validateUserInputPopUp() {
             if (this.contentComment.length === 0) {
-                this.errorMessage2 = 'Bitte fülle alle Felder aus!';
+                this.errorMessagePopUp = 'Bitte fülle alle Felder aus!';
                 this.correctInput2 = false;
                 return;
             } else {
                 this.correctInput2 = true;
-                this.errorMessage2 = '';
+                this.errorMessagePopUp = '';
             }
         },
         postNewsFeed() {
@@ -65,7 +65,7 @@ export default {
             }
         },
         postComment() {
-            this.validateUserInput2();
+            this.validateUserInputPopUp();
 
             if (this.correctInput2) {
                 fetch('http://localhost:3000/addComment', {
@@ -171,7 +171,7 @@ export default {
             <h3>Kommentar schreiben</h3>
             <textarea class="textarea" rows="4" v-model="this.contentComment"></textarea>
             <button class="button" @click="postComment">Posten</button>
-            <div class="error-message">{{ this.errorMessage2 }}</div>
+            <div class="error-message">{{ this.errorMessagePopUp }}</div>
             <div class="success-message">{{ this.successMessage2 }}</div>
         </div>
     </div>

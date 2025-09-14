@@ -58,7 +58,6 @@ export default {
             if (challenges.length === 0) {
                 this.errorMessage = 'Es gibt keine Challenge-Teilnehmer!';
             } else {
-                // Daten abgleichen
                 for (let i = 0; i < challengeParticipants.length; i++) {
                     let participant = '';
                     let progress = '';
@@ -78,15 +77,17 @@ export default {
                         }
                     }
 
-                    this.leaderboardData.push({
-                        participanname: participant,
-                        totalProgress: progress,
-                        challenge: challengename,
-                    });
+                    if ((participant.length > 0) & (progress.length > 0) & (challengename.length > 0)) {
+                        this.leaderboardData.push({
+                            participanname: participant,
+                            totalProgress: progress,
+                            challenge: challengename,
+                        });
+                    }
                 }
-            }
 
-            this.sortLeaderboardByProgress(this.leaderboardData);
+                this.sortLeaderboardByProgress(this.leaderboardData);
+            }
         },
         sortLeaderboardByProgress(data) {
             const sortedLeaderboardData = [...data].sort((a, b) => {
