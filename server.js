@@ -345,6 +345,23 @@ app.post('/createChallenge', (req, res) => {
     );
 });
 
+// API-Endpoint to add new progress in a challenge
+app.post('/addProgress', (req, res) => {
+    let { challenge_id, user_id, total_progress } = req.body;
+
+    connection.query(
+        'INSERT INTO `Challenge_Participant` (`challenge_id`, `user_id`, `total_progress`) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE `total_progress` = VALUES(total_progress)',
+        [challenge_id, user_id, total_progress],
+        (err, result) => {
+            if (err) {
+                console.error(err);
+            } else {
+                res.send(req.body);
+            }
+        },
+    );
+});
+
 app.listen(port, () => {
     console.log('server runs on http://localhost:' + port);
 });

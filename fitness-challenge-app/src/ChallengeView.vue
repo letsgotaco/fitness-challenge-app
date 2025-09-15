@@ -4,6 +4,7 @@ export default {
         return {
             userId: sessionStorage.getItem('user_id'),
             groupId: sessionStorage.getItem('groupId'),
+            challengeId: 0,
             correctInput: true,
             informationalMessage: '',
             errorMessage: '',
@@ -14,6 +15,11 @@ export default {
             deadline: '',
             challenges: [],
             currentDate: '',
+            showProgressForm: false,
+            progress: '',
+            correctInputProgressForm: true,
+            errorMessageProgressForm: '',
+            successMessageProgressForm: '',
         };
     },
     methods: {
@@ -81,6 +87,52 @@ export default {
                     console.error(error);
                 });
         },
+        toggleProgressForm(event) {
+            this.showProgressForm = !this.showProgressForm;
+            this.challengeId = event.target.id;
+        },
+        validateUserInputProgressForm() {
+            const regExpPercentage = /^(100([.,]0+)?|(\d{1,2}([.,]\d+)?))%$/;
+
+            if (this.progress.length === 0) {
+                this.errorMessageProgressForm = 'Bitte fülle alle Felder aus!';
+                this.correctInputProgressForm = false;
+                return;
+            } else if (!this.progress.match(regExpPercentage)) {
+                console.log('Does not match');
+                this.errorMessageProgressForm = 'Gebe bitte einen Prozentwert an!';
+                this.correctInputProgressForm = false;
+                return;
+            } else {
+                this.correctInputProgressForm = true;
+                this.errorMessageProgressForm = '';
+            }
+        },
+        saveChallengeProgress() {
+            this.validateUserInputProgressForm();
+
+            if (this.correctInputProgressForm) {
+                fetch('http://localhost:3000/addProgress', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        challenge_id: this.challengeId,
+                        user_id: this.userId,
+                        total_progress: this.progress,
+                    }),
+                })
+                    .then(res => {
+                        if (res.ok) {
+                            this.successMessageProgressForm = 'Fortschritt gespeichert!';
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            }
+        },
     },
     mounted() {
         this.displayChallenges();
@@ -92,15 +144,36 @@ export default {
 
 <template>
     <div class="card">
-        <h3>Aktive Challenges</h3>
+        <div>
+            <h3>Aktive Challenges</h3>
 
-        <div class="challenge" v-for="(data, index) in this.challenges" :key="index">
-            <span
-                ><b>{{ data.title }}</b></span
+            <div
+                class="challenge"
+                v-for="(data, index) in this.challenges"
+                :key="index"
+                @click="toggleProgressForm"
+                :id="data.challenge_id"
             >
-            <span>{{ data.description }}</span>
+                <span
+                    ><b>{{ data.title }}</b></span
+                >
+                <span>{{ data.description }}</span>
+            </div>
+            <div class="error-message">{{ this.informationalMessage }}</div>
         </div>
-        <div class="error-message">{{ this.informationalMessage }}</div>
+        <div v-if="this.showProgressForm">
+            <form>
+                <h3>Fortschritt eintragen</h3>
+
+                <label for="progress">Fortschritt</label>
+                <input type="text" id="progress" name="progress" v-model="this.progress" />
+
+                <button type="button" @click="saveChallengeProgress">Speichern</button>
+
+                <div class="error-message">{{ this.errorMessageProgressForm }}</div>
+                <div class="success-message">{{ this.successMessageProgressForm }}</div>
+            </form>
+        </div>
     </div>
 
     <form>
@@ -127,6 +200,9 @@ export default {
 
 <style scoped>
 .card {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
     margin-top: 30px;
     background: var(--white);
     border-radius: 12px;
