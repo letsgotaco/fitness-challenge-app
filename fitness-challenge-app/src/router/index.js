@@ -3,10 +3,9 @@ import ChallengeView from '@/ChallengeView.vue';
 import Dashboard from '@/Dashboard.vue';
 import GroupView from '@/GroupView.vue';
 import Leaderboard from '@/Leaderboard.vue';
-import login from '@/login.vue';
 import NewsFeed from '@/NewsFeed.vue';
 import Profile from '@/Profile.vue';
-import Login from '@/login.vue';
+import Login from '@/Login.vue';
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,7 +32,7 @@ const router = createRouter({
         },
         {
             path: '/login',
-            component: login,
+            component: Login,
         },
         {
             path: '/news-Feed',
