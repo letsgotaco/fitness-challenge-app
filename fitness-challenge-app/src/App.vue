@@ -118,4 +118,8 @@ textarea {
 .close-pop-up-button {
     margin-left: 90%;
 }
+
+.no-pointer-events {
+    pointer-events: none;
+}
 </style>

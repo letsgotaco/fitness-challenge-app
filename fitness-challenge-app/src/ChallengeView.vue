@@ -4,7 +4,9 @@ export default {
         return {
             userId: sessionStorage.getItem('user_id'),
             groupId: sessionStorage.getItem('groupId'),
-            challengeId: 0,
+            currentChallengeId: 0,
+            currentChallengeName: '',
+            currentChallengeDescription: '',
             correctInput: true,
             informationalMessage: '',
             errorMessage: '',
@@ -87,9 +89,17 @@ export default {
                     console.error(error);
                 });
         },
-        toggleProgressForm(event) {
+        async toggleProgressForm(event) {
             this.showProgressForm = !this.showProgressForm;
-            this.challengeId = event.target.id;
+            this.currentChallengeId = event.target.id;
+            this.currentChallengeName = event.target.dataset.challengename;
+            this.currentChallengeDescription = event.target.dataset.challengedescription;
+
+            let totalUserProgress = await this.CheckUserProgress();
+
+            if (totalUserProgress === '100%' && this.showProgressForm) {
+                this.$refs.saveProgressButton.disabled = true;
+            }
         },
         validateUserInputProgressForm() {
             const regExpPercentage = /^(100([.,]0+)?|(\d{1,2}([.,]\d+)?))%$/;
@@ -108,7 +118,7 @@ export default {
                 this.errorMessageProgressForm = '';
             }
         },
-        saveChallengeProgress() {
+        async saveChallengeProgress() {
             this.validateUserInputProgressForm();
 
             if (this.correctInputProgressForm) {
@@ -118,7 +128,7 @@ export default {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        challenge_id: this.challengeId,
+                        challenge_id: this.currentChallengeId,
                         user_id: this.userId,
                         total_progress: this.progress,
                     }),
@@ -131,6 +141,75 @@ export default {
                     .catch(error => {
                         console.error(error);
                     });
+            }
+
+            if (this.progress === '100%') {
+                // Create new Badge for challenge, if it doesnt exist
+                fetch('http://localhost:3000/createBadge', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: this.currentChallengeName,
+                        description: this.currentChallengeDescription,
+                        icon_url: 'https://cdn-icons-png.flaticon.com/512/5182/5182773.png',
+                    }),
+                }).catch(error => {
+                    console.error(error);
+                });
+
+                let badgeId = await this.getBadgeId();
+
+                fetch('http://localhost:3000/createUserBadge', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: this.userId,
+                        badge_id: badgeId,
+                    }),
+                })
+                    .then(res => {
+                        if (res.ok) {
+                            console.log(res);
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            }
+        },
+        async CheckUserProgress() {
+            try {
+                const res = await fetch(
+                    `http://localhost:3000/getUserProgress/${encodeURIComponent(this.userId)}/${encodeURIComponent(this.currentChallengeId)}`,
+                );
+
+                if (res.ok) {
+                    const data = await res.json();
+                    return data[0].total_progress;
+                }
+            } catch (error) {
+                console.error(error);
+                return null;
+            }
+        },
+
+        async getBadgeId() {
+            try {
+                const res = await fetch(
+                    `http://localhost:3000/getSpecificBadgeId/${encodeURIComponent(this.currentChallengeName)}`,
+                );
+
+                if (res.ok) {
+                    const data = await res.json();
+                    return data[0].badge_id;
+                }
+            } catch (error) {
+                console.error(error);
+                return null;
             }
         },
     },
@@ -153,11 +232,13 @@ export default {
                 :key="index"
                 @click="toggleProgressForm"
                 :id="data.challenge_id"
+                :data-challengeName="data.title"
+                :data-challengeDescription="data.description"
             >
-                <span
+                <span class="no-pointer-events"
                     ><b>{{ data.title }}</b></span
                 >
-                <span>{{ data.description }}</span>
+                <span class="no-pointer-events">{{ data.description }}</span>
             </div>
             <div class="error-message">{{ this.informationalMessage }}</div>
         </div>
@@ -168,7 +249,9 @@ export default {
                 <label for="progress">Fortschritt</label>
                 <input type="text" id="progress" name="progress" v-model="this.progress" />
 
-                <button type="button" @click="saveChallengeProgress">Speichern</button>
+                <button ref="saveProgressButton" type="button" @click="saveChallengeProgress">
+                    Speichern
+                </button>
 
                 <div class="error-message">{{ this.errorMessageProgressForm }}</div>
                 <div class="success-message">{{ this.successMessageProgressForm }}</div>
@@ -254,5 +337,10 @@ button {
     font-size: var(--font-size-small-text);
     cursor: pointer;
     margin-top: 15px;
+}
+
+button:disabled {
+    background: var(--grey);
+    cursor: not-allowed;
 }
 </style>

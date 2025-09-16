@@ -362,6 +362,76 @@ app.post('/addProgress', (req, res) => {
     );
 });
 
+// API-Endpoint to create new badge if necessay
+app.post('/createBadge', async (req, res) => {
+    const { name, description, icon_url } = req.body;
+
+    connection.query(
+        'INSERT IGNORE INTO `Badge` (name, description, icon_url) VALUES (?, ?, ?)',
+        [name, description, icon_url],
+        (err, result) => {
+            if (err) {
+                console.error(err);
+            } else {
+                res.send(req.body);
+            }
+        },
+    );
+});
+
+// API-Endpoint to add user badges
+app.post('/createUserBadge', (req, res) => {
+    let { user_id, badge_id } = req.body;
+
+    connection.query(
+        'INSERT INTO `User_Badge` (`user_id`, `badge_id`) VALUES (?, ?)',
+        [user_id, badge_id],
+        (err, result) => {
+            if (err) {
+                console.error(err);
+            } else {
+                res.send(req.body);
+            }
+        },
+    );
+});
+
+app.get('/getSpecificBadgeId/:name', async (req, res) => {
+    const { name } = req.params;
+
+    try {
+        connection.execute('SELECT `badge_id` FROM `Badge` WHERE `name` = ?', [name], (err, rows) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+
+            res.json(rows);
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/getUserProgress/:user_id/:challenge_id', (req, res) => {
+    const { user_id, challenge_id } = req.params;
+
+    try {
+        connection.execute(
+            'SELECT `total_progress` FROM `Challenge_Participant` WHERE `user_id` = ? AND `challenge_id` = ?',
+            [user_id, challenge_id],
+            (err, rows) => {
+                if (err) {
+                    return res.status(500).json({ error: err.message });
+                }
+
+                res.json(rows);
+            },
+        );
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 app.listen(port, () => {
     console.log('server runs on http://localhost:' + port);
 });
