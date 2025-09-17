@@ -89,7 +89,7 @@ export default {
                     })
                     .then(async data => {
                         if (data.length === 0) {
-                            let passwordHash = await this.hashPassword(this.passwordInput, 10);
+                            let passwordHash = await this.$hashPassword(this.passwordInput, 10);
 
                             fetch('http://localhost:3000/registerUser', {
                                 method: 'POST',
@@ -119,7 +119,7 @@ export default {
                             }
 
                             if (!this.userRegisitered) {
-                                let passwordHash = await this.hashPassword(this.passwordInput, 10);
+                                let passwordHash = await this.$hashPassword(this.passwordInput, 10);
 
                                 fetch('http://localhost:3000/registerUser', {
                                     method: 'POST',
@@ -149,15 +149,15 @@ export default {
                     });
             }
         },
-        async hashPassword(plainPassword, saltRounds = 10) {
-            try {
-                const hash = await bcrypt.hash(plainPassword, saltRounds);
-                return hash;
-            } catch (err) {
-                console.error('Fehler beim Hashen:', err);
-                throw err;
-            }
-        },
+        // async hashPassword(plainPassword, saltRounds = 10) {
+        //     try {
+        //         const hash = await bcrypt.hash(plainPassword, saltRounds);
+        //         return hash;
+        //     } catch (err) {
+        //         console.error('Fehler beim Hashen:', err);
+        //         throw err;
+        //     }
+        // },
         comparePassword(plainPassword, hashPassword) {
             return new Promise((resolve, reject) => {
                 bcrypt.compare(plainPassword, hashPassword, (err, result) => {

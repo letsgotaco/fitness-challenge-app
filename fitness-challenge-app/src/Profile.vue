@@ -8,6 +8,12 @@ export default {
             name: '',
             textBadges: '',
             textChallenges: '',
+            newEmailInput: '',
+            newPasswordInput: '',
+            newUsernameInput: '',
+            correctInput: true,
+            errorMessage: '',
+            successMessage: '',
         };
     },
     methods: {
@@ -113,6 +119,59 @@ export default {
                     console.error(error);
                 });
         },
+        validateUserInput() {
+            console.log(this.newEmailInput);
+            console.log(this.newPasswordInput);
+            console.log(this.newUsernameInput);
+            if (
+                this.newEmailInput.length === 0 ||
+                this.newPasswordInput.length === 0 ||
+                this.newUsernameInput.length === 0
+            ) {
+                this.errorMessage = 'Bitte fülle alle Felder aus!';
+                this.correctInput = false;
+                return;
+            } else {
+                this.correctInput = true;
+                this.errorMessage = '';
+            }
+
+            const emailRegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!this.newEmailInput.match(emailRegExp)) {
+                this.errorMessage = 'Falsches E-Mail Format!';
+                this.correctInput = false;
+                return;
+            } else {
+                this.correctInput = true;
+                this.errorMessage = '';
+            }
+        },
+        async changeLoginData() {
+            this.validateUserInput();
+
+            if (this.correctInput) {
+                let passwordHash = await this.$hashPassword(this.newPasswordInput, 10);
+
+                fetch('http://localhost:3000/updateUser', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: this.newUsernameInput,
+                        email: this.newEmailInput,
+                        password_hash: passwordHash,
+                        user_id: this.userId,
+                    }),
+                })
+                    .then(res => {
+                        if (res.ok) {
+                            this.successMessage = 'Daten erfolgreich abgeändert!';
+                        }
+                    })
+                    .catch(error => console.error('Fehler:', error));
+            }
+        },
     },
     mounted() {
         this.getBadges();
@@ -148,6 +207,25 @@ export default {
                     <span>{{ data.name }}</span>
                 </div>
             </div>
+        </div>
+
+        <div class="section">
+            <h3>Anmeldedaten ändern</h3>
+            <form>
+                <label for="email">E-Mail</label>
+                <input type="email" id="email" placeholder="you@example.com" v-model="this.newEmailInput" />
+
+                <label for="password">Passwort</label>
+                <input type="password" id="password" placeholder="••••••••" v-model="this.newPasswordInput" />
+
+                <label for="name">Nutzername</label>
+                <input id="name" placeholder="Dein Name" v-model="this.newUsernameInput" />
+
+                <button type="button" @click="changeLoginData">ändern</button>
+
+                <div class="error-message">{{ this.errorMessage }}</div>
+                <div class="success-message">{{ this.successMessage }}</div>
+            </form>
         </div>
     </div>
 </template>
@@ -199,5 +277,38 @@ export default {
 
 .section {
     padding: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+}
+
+form input {
+    width: fit-content;
+    padding: 12px;
+    margin-bottom: 16px;
+    border: none;
+    border-radius: 10px;
+    background: var(--white);
+    font-size: var(--font-size-small-text);
+}
+
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(to bottom right, var(--light-blue), var(--light-blue-2));
+    color: var(--white);
+    font-size: var(--font-size-small-text);
+    cursor: pointer;
+    margin-bottom: 15px;
+    width: fit-content;
+}
+
+.error-message,
+.success-message {
+    padding: 0;
 }
 </style>

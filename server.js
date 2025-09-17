@@ -432,6 +432,22 @@ app.get('/getUserProgress/:user_id/:challenge_id', (req, res) => {
     }
 });
 
+// API-Endpoint to update login data
+app.patch('/updateUser', (req, res) => {
+    const { username, email, password_hash, user_id } = req.body;
+    connection.query(
+        'UPDATE `User` SET `username` = ?,`email` = ?,`password_hash`= ? WHERE `user_id` = ?',
+        [username, email, password_hash, user_id],
+        (err, result) => {
+            if (err) {
+                console.error(err);
+            } else {
+                res.send(req.body);
+            }
+        },
+    );
+});
+
 app.listen(port, () => {
     console.log('server runs on http://localhost:' + port);
 });
