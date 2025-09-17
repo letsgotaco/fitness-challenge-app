@@ -136,12 +136,56 @@ export default {
                             this.posts[i].comments.push({
                                 user: c.user_id,
                                 content: c.content,
-                                id: c.id,
+                                id: c.comment_id,
                             });
                         });
                     }
                 }
             }
+        },
+        deleteComment(event) {
+            let id = event.target.id;
+
+            fetch(`http://localhost:3000/deleteComment/${encodeURIComponent(id)}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    comment_id: id,
+                }),
+            })
+                .then(res => {
+                    if (res.ok) {
+                        this.displayPosts();
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        },
+        deletePost(event) {
+            let id = event.target.id;
+            console.log(id);
+            console.log(this.posts);
+
+            fetch(`http://localhost:3000/deletePost/${encodeURIComponent(id)}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    post_id: id,
+                }),
+            })
+                .then(res => {
+                    if (res.ok) {
+                        this.displayPosts();
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
         },
     },
     mounted() {
@@ -160,7 +204,28 @@ export default {
 
         <div class="post-container" v-for="(data, index) in this.posts" :key="index">
             <p>{{ data.post.content }}</p>
-            <p class="comment" v-for="(data, index) in data.comments" :key="index">{{ data.content }}</p>
+
+            <div v-for="(data, index) in data.comments" :key="index">
+                <p class="comment">{{ data.content }}</p>
+                <button
+                    type="button"
+                    class="button-2"
+                    :id="data.id"
+                    @click="deleteComment"
+                    v-if="data.user === Number(this.userId)"
+                >
+                    Löschen
+                </button>
+            </div>
+
+            <button
+                class="button"
+                :id="data.post.id"
+                @click="deletePost"
+                v-if="data.post.user === Number(this.userId)"
+            >
+                Löschen
+            </button>
             <button class="button" @click="openAndClosePopUp" :id="data.post.id">Kommentieren</button>
         </div>
     </div>
@@ -197,13 +262,23 @@ export default {
 }
 
 .button {
-    margin-top: 10px;
+    margin: 10px 10px 0 0;
     padding: 10px 20px;
     border: none;
     border-radius: 8px;
     background: linear-gradient(to bottom right, var(--light-blue), var(--light-blue-2));
     color: var(--white);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
+    cursor: pointer;
+    font-size: var(--font-size-small-text);
+}
+
+.button-2 {
+    padding: 5px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(to bottom right, var(--light-blue), var(--light-blue-2));
+    color: var(--white);
     cursor: pointer;
     font-size: var(--font-size-small-text);
 }

@@ -448,6 +448,37 @@ app.patch('/updateUser', (req, res) => {
     );
 });
 
+// API-Endpoint to delete comment
+app.delete('/deleteComment/:comment_id', (req, res) => {
+    const { comment_id } = req.body;
+    connection.query('DELETE FROM `Comment` WHERE `comment_id` = ?', [comment_id], (err, result) => {
+        if (err) {
+            console.error(err);
+        } else {
+            res.send(req.body);
+        }
+    });
+});
+
+// API-Endpoint to delete Post
+app.delete('/deletePost/:post_id', (req, res) => {
+    const { post_id } = req.body;
+
+    connection.query('DELETE FROM `Comment` WHERE `post_id` = ?', [post_id], (err, commentResult) => {
+        if (err) {
+            console.error('Error deleting comments:', err);
+        }
+
+        connection.query('DELETE FROM `Feed_Post` WHERE `post_id` = ?', [post_id], (err, postResult) => {
+            if (err) {
+                console.error('Error deleting post:', err);
+            }
+
+            res.send(req.body);
+        });
+    });
+});
+
 app.listen(port, () => {
     console.log('server runs on http://localhost:' + port);
 });
