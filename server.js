@@ -464,18 +464,25 @@ app.delete('/deleteComment/:comment_id', (req, res) => {
 app.delete('/deletePost/:post_id', (req, res) => {
     const { post_id } = req.body;
 
-    connection.query('DELETE FROM `Comment` WHERE `post_id` = ?', [post_id], (err, commentResult) => {
+    connection.query('DELETE FROM `Feed_Post` WHERE `post_id` = ?', [post_id], err => {
         if (err) {
             console.error('Error deleting comments:', err);
-        }
-
-        connection.query('DELETE FROM `Feed_Post` WHERE `post_id` = ?', [post_id], (err, postResult) => {
-            if (err) {
-                console.error('Error deleting post:', err);
-            }
-
+        } else {
             res.send(req.body);
-        });
+        }
+    });
+});
+
+// API-Endpoint to delete user
+app.delete('/deleteUser/:user_id', (req, res) => {
+    const { user_id } = req.body;
+
+    connection.query('DELETE FROM `User` WHERE `user_id` = ?', [user_id], err => {
+        if (err) {
+            console.error('Error deleting comments:', err);
+        } else {
+            res.send(req.body);
+        }
     });
 });
 

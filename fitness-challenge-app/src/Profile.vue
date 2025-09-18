@@ -172,6 +172,28 @@ export default {
                     .catch(error => console.error('Fehler:', error));
             }
         },
+        deleteAccount() {
+            console.log('delete');
+            let id = Number(this.userId);
+
+            fetch(`http://localhost:3000/deleteUser/${encodeURIComponent(id)}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: id,
+                }),
+            })
+                .then(res => {
+                    if (res.ok) {
+                        this.$router.push('/login');
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        },
     },
     mounted() {
         this.getBadges();
@@ -226,6 +248,12 @@ export default {
                 <div class="error-message">{{ this.errorMessage }}</div>
                 <div class="success-message">{{ this.successMessage }}</div>
             </form>
+        </div>
+
+        <div class="section">
+            <h3>Konto löschen</h3>
+
+            <button type="button" @click="deleteAccount">Löschen</button>
         </div>
     </div>
 </template>
@@ -303,7 +331,7 @@ button {
     color: var(--white);
     font-size: var(--font-size-small-text);
     cursor: pointer;
-    margin-bottom: 15px;
+    margin-top: 15px;
     width: fit-content;
 }
 
