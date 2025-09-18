@@ -273,6 +273,11 @@ export default {
     padding-top: 20px;
 }
 
+.challenge-row-container {
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+
 .badge-container {
     display: flex;
     flex-direction: column;

@@ -21,7 +21,6 @@ app.get('/', (req, res) => {
     connection.query('SELECT NOW() AS currentTime', (err, rows) => {
         if (err) {
             console.error('Fehler:', err);
-            res.status(500).send('Datenbank-Fehler');
             return;
         }
         res.send('Verbindung erfolgreich! Aktuelle Zeit: ' + rows[0].currentTime);
@@ -41,7 +40,8 @@ app.get('/getUser', (req, res) => {
 
 // API-Endpoint to register new User
 app.post('/registerUser', (req, res) => {
-    let { username, email, password_hash } = req.body;
+    const { username, email, password_hash } = req.body;
+
     connection.query(
         'INSERT INTO `User` (`username`, `email`, `password_hash`) VALUES (?, ?, ?)',
         [username, email, password_hash],
@@ -62,7 +62,7 @@ app.get('/getUserId/:email', async (req, res) => {
     try {
         connection.execute('SELECT `user_id` FROM `User` WHERE `email` = ?', [email], (err, rows) => {
             if (err) {
-                return res.status(500).json({ error: err.message });
+                console.error(err);
             }
 
             if (rows.length === 0) {
@@ -72,7 +72,7 @@ app.get('/getUserId/:email', async (req, res) => {
             res.json(rows[0]);
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error(err);
     }
 });
 
@@ -83,13 +83,13 @@ app.get('/getBadges/:user_id', async (req, res) => {
     try {
         connection.execute('SELECT * FROM `User_Badge` WHERE `user_id` = ?', [user_id], (err, rows) => {
             if (err) {
-                return res.status(500).json({ error: err.message });
+                console.error(err);
             }
 
             res.json(rows);
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error(err);
     }
 });
 
@@ -114,14 +114,14 @@ app.get('/getChallenges/:user_id', async (req, res) => {
             [user_id],
             (err, rows) => {
                 if (err) {
-                    return res.status(500).json({ error: err.message });
+                    console.error(err);
                 }
 
                 res.json(rows);
             },
         );
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error(err);
     }
 });
 
@@ -146,14 +146,14 @@ app.get('/getPrivateGroups/:user_id', async (req, res) => {
             [user_id],
             (err, rows) => {
                 if (err) {
-                    return res.status(500).json({ error: err.message });
+                    console.error(err);
                 }
 
                 res.json(rows);
             },
         );
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error(err);
     }
 });
 
@@ -178,7 +178,7 @@ app.get('/getChallengeCounter/:user_id', async (req, res) => {
             [user_id],
             (err, rows) => {
                 if (err) {
-                    return res.status(500).json({ error: err.message });
+                    console.error(err);
                 }
 
                 const count = rows[0].total;
@@ -186,13 +186,13 @@ app.get('/getChallengeCounter/:user_id', async (req, res) => {
             },
         );
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error(err);
     }
 });
 
 // API-Endpoint to create new Group
 app.post('/createGroup', (req, res) => {
-    let { name, description, created_by } = req.body;
+    const { name, description, created_by } = req.body;
 
     connection.query(
         'INSERT INTO `Private_Group` (`name`, `description`, `created_by`) VALUES (?, ?, ?)',
@@ -200,7 +200,6 @@ app.post('/createGroup', (req, res) => {
         (err, result) => {
             if (err) {
                 console.error(err);
-                res.status(500).send({ error: 'Database error' });
             } else {
                 res.send({
                     group_id: result.insertId,
@@ -215,7 +214,7 @@ app.post('/createGroup', (req, res) => {
 
 // API-Endpoint to add new group member
 app.post('/addGroupMember', (req, res) => {
-    let { group_id, user_id } = req.body;
+    const { group_id, user_id } = req.body;
 
     connection.query(
         'INSERT INTO `Private_Group_Member` (`group_id`, `user_id`) VALUES (?, ?)',
@@ -223,7 +222,6 @@ app.post('/addGroupMember', (req, res) => {
         (err, result) => {
             if (err) {
                 console.error(err);
-                res.status(500).send({ error: 'Database error' });
             } else {
                 res.send(req.body);
             }
@@ -238,13 +236,13 @@ app.get('/getPosts/:group_id', async (req, res) => {
     try {
         connection.execute('SELECT * FROM `Feed_Post` WHERE `group_id` = ?', [group_id], (err, rows) => {
             if (err) {
-                return res.status(500).json({ error: err.message });
+                console.error(err);
             }
 
             res.json(rows);
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error(err);
     }
 });
 
@@ -255,19 +253,19 @@ app.get('/getComments/:post_id', async (req, res) => {
     try {
         connection.execute('SELECT * FROM `Comment` WHERE `post_id` = ?', [post_id], (err, rows) => {
             if (err) {
-                return res.status(500).json({ error: err.message });
+                console.error(err);
             }
 
             res.json(rows);
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error(err);
     }
 });
 
 // API-Endpoint to add new post
 app.post('/addPost', (req, res) => {
-    let { group_id, user_id, content } = req.body;
+    const { group_id, user_id, content } = req.body;
 
     connection.query(
         'INSERT INTO `Feed_Post` (`group_id`, `user_id`,`content`) VALUES (?, ?, ?)',
@@ -275,7 +273,6 @@ app.post('/addPost', (req, res) => {
         (err, result) => {
             if (err) {
                 console.error(err);
-                res.status(500).send({ error: 'Database error' });
             } else {
                 res.send(req.body);
             }
@@ -285,7 +282,7 @@ app.post('/addPost', (req, res) => {
 
 // API-Endpoint to add new comment
 app.post('/addComment', (req, res) => {
-    let { post_id, user_id, content } = req.body;
+    const { post_id, user_id, content } = req.body;
 
     connection.query(
         'INSERT INTO `Comment` (`post_id`, `user_id`,`content`) VALUES (?, ?, ?)',
@@ -293,7 +290,6 @@ app.post('/addComment', (req, res) => {
         (err, result) => {
             if (err) {
                 console.error(err);
-                res.status(500).send({ error: 'Database error' });
             } else {
                 res.send(req.body);
             }
@@ -308,13 +304,13 @@ app.get('/getGroupChallenges/:group_id', async (req, res) => {
     try {
         connection.execute('SELECT * FROM `Challenge` WHERE group_id = ?', [group_id], (err, rows) => {
             if (err) {
-                return res.status(500).json({ error: err.message });
+                console.error(err);
             }
 
             res.json(rows);
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error(err);
     }
 });
 
@@ -331,7 +327,8 @@ app.get('/getAllChallengeParticipants', (req, res) => {
 
 // API-Endpoint to create new Challenge in a group
 app.post('/createChallenge', (req, res) => {
-    let { group_id, title, description, target, end_date, created_by } = req.body;
+    const { group_id, title, description, target, end_date, created_by } = req.body;
+
     connection.query(
         'INSERT INTO `Challenge` (`group_id`, `title`, `description`, `target`, `end_date`, `created_by`) VALUES (?, ?, ?, ?, ?, ?)',
         [group_id, title, description, target, end_date, created_by],
@@ -347,7 +344,7 @@ app.post('/createChallenge', (req, res) => {
 
 // API-Endpoint to add new progress in a challenge
 app.post('/addProgress', (req, res) => {
-    let { challenge_id, user_id, total_progress } = req.body;
+    const { challenge_id, user_id, total_progress } = req.body;
 
     connection.query(
         'INSERT INTO `Challenge_Participant` (`challenge_id`, `user_id`, `total_progress`) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE `total_progress` = VALUES(total_progress)',
@@ -381,7 +378,7 @@ app.post('/createBadge', async (req, res) => {
 
 // API-Endpoint to add user badges
 app.post('/createUserBadge', (req, res) => {
-    let { user_id, badge_id } = req.body;
+    const { user_id, badge_id } = req.body;
 
     connection.query(
         'INSERT INTO `User_Badge` (`user_id`, `badge_id`) VALUES (?, ?)',
@@ -402,13 +399,13 @@ app.get('/getSpecificBadgeId/:name', async (req, res) => {
     try {
         connection.execute('SELECT `badge_id` FROM `Badge` WHERE `name` = ?', [name], (err, rows) => {
             if (err) {
-                return res.status(500).json({ error: err.message });
+                console.error(err);
             }
 
             res.json(rows);
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error(err);
     }
 });
 
@@ -421,20 +418,21 @@ app.get('/getUserProgress/:user_id/:challenge_id', (req, res) => {
             [user_id, challenge_id],
             (err, rows) => {
                 if (err) {
-                    return res.status(500).json({ error: err.message });
+                    console.error(err);
                 }
 
                 res.json(rows);
             },
         );
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error(err);
     }
 });
 
 // API-Endpoint to update login data
 app.patch('/updateUser', (req, res) => {
     const { username, email, password_hash, user_id } = req.body;
+
     connection.query(
         'UPDATE `User` SET `username` = ?,`email` = ?,`password_hash`= ? WHERE `user_id` = ?',
         [username, email, password_hash, user_id],

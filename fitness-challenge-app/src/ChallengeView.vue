@@ -95,10 +95,12 @@ export default {
             this.currentChallengeName = event.target.dataset.challengename;
             this.currentChallengeDescription = event.target.dataset.challengedescription;
 
-            let totalUserProgress = await this.CheckUserProgress();
+            if (this.showProgressForm) {
+                let totalUserProgress = await this.CheckUserProgress();
 
-            if (totalUserProgress === '100%' && this.showProgressForm) {
-                this.$refs.saveProgressButton.disabled = true;
+                if (totalUserProgress === '100%') {
+                    this.$refs.saveProgressButton.disabled = true;
+                }
             }
         },
         validateUserInputProgressForm() {
@@ -181,7 +183,9 @@ export default {
                 );
 
                 const data = await res.json();
-                return data[0].total_progress;
+                if (data.length > 0) {
+                    return data[0].total_progress;
+                }
             } catch (error) {
                 console.error(error);
                 return;
