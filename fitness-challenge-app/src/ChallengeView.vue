@@ -169,15 +169,9 @@ export default {
                         user_id: this.userId,
                         badge_id: badgeId,
                     }),
-                })
-                    .then(res => {
-                        if (res.ok) {
-                            console.log(res);
-                        }
-                    })
-                    .catch(error => {
-                        console.error(error);
-                    });
+                }).catch(error => {
+                    console.error(error);
+                });
             }
         },
         async CheckUserProgress() {
@@ -186,10 +180,8 @@ export default {
                     `http://localhost:3000/getUserProgress/${encodeURIComponent(this.userId)}/${encodeURIComponent(this.currentChallengeId)}`,
                 );
 
-                if (res.ok) {
-                    const data = await res.json();
-                    return data[0].total_progress;
-                }
+                const data = await res.json();
+                return data[0].total_progress;
             } catch (error) {
                 console.error(error);
                 return null;

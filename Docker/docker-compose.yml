@@ -4,25 +4,24 @@ services:
     db:
         image: mysql:8.0
         container_name: databank
-        restart: always # container restarts automatically
         environment:
             MYSQL_DATABASE: databank-fitness-challenge-app
-            MYSQL_USER: root
-            MYSQL_PASSWORD: password
+            MYSQL_ROOT_PASSWORD: password
         ports:
             - '3307:3306'
         volumes:
             - db_data:/var/lib/mysql
+            # automatically initialize databank with sql-file on first start up
+            - ./databank-fitness-challenge-app.sql:/docker-entrypoint-initdb.d/databank-fitness-challenge-app.sql
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
         container_name: phpmyadmin
-        restart: always # container restarts automatically
         environment:
             PMA_HOST: db
             # DO NOT CHANGE: Login data for PHPMyAdmin
             PMA_USER: root
-            PMA_PASSWORD: rootpass
+            PMA_PASSWORD: password
         ports:
             - '8080:80'
 

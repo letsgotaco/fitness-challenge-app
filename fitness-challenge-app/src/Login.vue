@@ -100,15 +100,18 @@ export default {
                                     username: this.usernameInput,
                                     email: this.emailInput,
                                     password_hash: passwordHash,
-                                }).then(res => {
+                                }),
+                            })
+                                .then(res => {
                                     if (res.ok) {
                                         this.successMessage = 'Nutzer erfolgreich registriert!';
+                                    } else {
+                                        console.error('Fehler beim Registrieren:', res.statusText);
                                     }
-                                }),
-                            }).catch(error => {
-                                console.error(error);
-                                return;
-                            });
+                                })
+                                .catch(error => {
+                                    console.error(error);
+                                });
                         } else {
                             for (let i = 0; i < data.length; i++) {
                                 if (data[i].email === this.emailInput) {
@@ -149,15 +152,6 @@ export default {
                     });
             }
         },
-        // async hashPassword(plainPassword, saltRounds = 10) {
-        //     try {
-        //         const hash = await bcrypt.hash(plainPassword, saltRounds);
-        //         return hash;
-        //     } catch (err) {
-        //         console.error('Fehler beim Hashen:', err);
-        //         throw err;
-        //     }
-        // },
         comparePassword(plainPassword, hashPassword) {
             return new Promise((resolve, reject) => {
                 bcrypt.compare(plainPassword, hashPassword, (err, result) => {

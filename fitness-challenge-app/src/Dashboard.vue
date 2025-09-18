@@ -196,7 +196,7 @@ export default {
             })
                 .then(res => {
                     if (res.ok) {
-                        this.displayPrivateGroups();
+                        window.location.reload();
                     }
                 })
                 .catch(error => {

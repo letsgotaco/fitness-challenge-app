@@ -12,7 +12,7 @@ let connection = mysql.createConnection({
     host: 'localhost',
     port: 3307,
     user: 'root',
-    password: 'rootpass',
+    password: 'password',
     database: 'databank-fitness-challenge-app',
 });
 
