@@ -486,6 +486,19 @@ app.delete('/deleteUser/:user_id', (req, res) => {
     });
 });
 
+// API-Endpoint to delete groups
+app.delete('/deleteGroup/:group_id', (req, res) => {
+    const { group_id } = req.body;
+
+    connection.query('DELETE FROM `Private_Group` WHERE `group_id` = ?', [group_id], err => {
+        if (err) {
+            console.error('Error deleting comments:', err);
+        } else {
+            res.send(req.body);
+        }
+    });
+});
+
 app.listen(port, () => {
     console.log('server runs on http://localhost:' + port);
 });

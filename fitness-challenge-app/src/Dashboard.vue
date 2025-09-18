@@ -80,6 +80,7 @@ export default {
                                                 name: data[i].name,
                                                 description: data[i].description,
                                                 id: data[i].group_id,
+                                                admin: data[i].created_by,
                                             });
                                         }
                                     }
@@ -172,7 +173,7 @@ export default {
                     .then(res => {
                         if (res.ok) {
                             this.successMessage = `Mitglieder erfolgreich hinzugefügt!`;
-                            this.displayPrivateGroups();
+                            window.location.reload();
                             return res.json();
                         }
                     })
@@ -180,6 +181,27 @@ export default {
                         console.error('Fehler:', error);
                     });
             }
+        },
+        deleteGroup(event) {
+            let id = event.target.id;
+
+            fetch(`http://localhost:3000/deleteGroup/${encodeURIComponent(id)}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    group_id: id,
+                }),
+            })
+                .then(res => {
+                    if (res.ok) {
+                        this.displayPrivateGroups();
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
         },
     },
     mounted() {
@@ -227,6 +249,14 @@ export default {
                 <!-- id is used to set groupname in groupview component. DO NOT REMOVE -->
                 <button class="group-button" :id="data.name" :value="data.id" @click="setGroupname">
                     Zur Gruppe
+                </button>
+                <button
+                    class="group-button"
+                    :id="data.id"
+                    v-if="data.admin === Number(this.userId)"
+                    @click="deleteGroup"
+                >
+                    Löschen
                 </button>
             </div>
 

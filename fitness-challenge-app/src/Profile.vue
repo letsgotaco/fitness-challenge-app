@@ -120,9 +120,6 @@ export default {
                 });
         },
         validateUserInput() {
-            console.log(this.newEmailInput);
-            console.log(this.newPasswordInput);
-            console.log(this.newUsernameInput);
             if (
                 this.newEmailInput.length === 0 ||
                 this.newPasswordInput.length === 0 ||
@@ -173,7 +170,6 @@ export default {
             }
         },
         deleteAccount() {
-            console.log('delete');
             let id = Number(this.userId);
 
             fetch(`http://localhost:3000/deleteUser/${encodeURIComponent(id)}`, {

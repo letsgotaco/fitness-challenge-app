@@ -166,8 +166,6 @@ export default {
         },
         deletePost(event) {
             let id = event.target.id;
-            console.log(id);
-            console.log(this.posts);
 
             fetch(`http://localhost:3000/deletePost/${encodeURIComponent(id)}`, {
                 method: 'DELETE',

@@ -109,7 +109,6 @@ export default {
                 this.correctInputProgressForm = false;
                 return;
             } else if (!this.progress.match(regExpPercentage)) {
-                console.log('Does not match');
                 this.errorMessageProgressForm = 'Gebe bitte einen Prozentwert an!';
                 this.correctInputProgressForm = false;
                 return;
