@@ -146,7 +146,7 @@ export default {
         deleteComment(event) {
             let id = event.target.id;
 
-            fetch(`http://localhost:3000/deleteComment/${encodeURIComponent(id)}`, {
+            fetch(`http://localhost:3000/deleteComment`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -167,7 +167,7 @@ export default {
         deletePost(event) {
             let id = event.target.id;
 
-            fetch(`http://localhost:3000/deletePost/${encodeURIComponent(id)}`, {
+            fetch(`http://localhost:3000/deletePost`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

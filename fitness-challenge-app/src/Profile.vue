@@ -172,7 +172,7 @@ export default {
         deleteAccount() {
             let id = Number(this.userId);
 
-            fetch(`http://localhost:3000/deleteUser/${encodeURIComponent(id)}`, {
+            fetch(`http://localhost:3000/deleteUser`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

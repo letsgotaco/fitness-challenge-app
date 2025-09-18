@@ -449,8 +449,9 @@ app.patch('/updateUser', (req, res) => {
 });
 
 // API-Endpoint to delete comment
-app.delete('/deleteComment/:comment_id', (req, res) => {
+app.delete('/deleteComment', (req, res) => {
     const { comment_id } = req.body;
+
     connection.query('DELETE FROM `Comment` WHERE `comment_id` = ?', [comment_id], (err, result) => {
         if (err) {
             console.error(err);
@@ -461,7 +462,7 @@ app.delete('/deleteComment/:comment_id', (req, res) => {
 });
 
 // API-Endpoint to delete Post
-app.delete('/deletePost/:post_id', (req, res) => {
+app.delete('/deletePost', (req, res) => {
     const { post_id } = req.body;
 
     connection.query('DELETE FROM `Feed_Post` WHERE `post_id` = ?', [post_id], err => {
@@ -474,7 +475,7 @@ app.delete('/deletePost/:post_id', (req, res) => {
 });
 
 // API-Endpoint to delete user
-app.delete('/deleteUser/:user_id', (req, res) => {
+app.delete('/deleteUser', (req, res) => {
     const { user_id } = req.body;
 
     connection.query('DELETE FROM `User` WHERE `user_id` = ?', [user_id], err => {
@@ -487,7 +488,7 @@ app.delete('/deleteUser/:user_id', (req, res) => {
 });
 
 // API-Endpoint to delete groups
-app.delete('/deleteGroup/:group_id', (req, res) => {
+app.delete('/deleteGroup', (req, res) => {
     const { group_id } = req.body;
 
     connection.query('DELETE FROM `Private_Group` WHERE `group_id` = ?', [group_id], err => {

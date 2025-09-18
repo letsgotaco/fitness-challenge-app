@@ -185,7 +185,7 @@ export default {
         deleteGroup(event) {
             let id = event.target.id;
 
-            fetch(`http://localhost:3000/deleteGroup/${encodeURIComponent(id)}`, {
+            fetch(`http://localhost:3000/deleteGroup`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
