@@ -184,7 +184,7 @@ export default {
                 return data[0].total_progress;
             } catch (error) {
                 console.error(error);
-                return null;
+                return;
             }
         },
 
@@ -194,13 +194,11 @@ export default {
                     `http://localhost:3000/getSpecificBadgeId/${encodeURIComponent(this.currentChallengeName)}`,
                 );
 
-                if (res.ok) {
-                    const data = await res.json();
-                    return data[0].badge_id;
-                }
+                const data = await res.json();
+                return data[0].badge_id;
             } catch (error) {
                 console.error(error);
-                return null;
+                return;
             }
         },
     },

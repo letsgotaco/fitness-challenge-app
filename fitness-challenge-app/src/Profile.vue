@@ -207,8 +207,8 @@ export default {
 
         <div class="section">
             <h3>Abgeschlossene Challenges</h3>
-            <span>{{ this.textChallenges }}</span>
             <div class="challenge-row-container">
+                <span>{{ this.textChallenges }}</span>
                 <div class="challenge-container" v-for="(data, index) in this.challenges" :key="index">
                     <span>{{ data.title }}</span>
                     <span>Beendet am {{ data.deadline }}</span>
