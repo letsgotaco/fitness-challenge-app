@@ -498,6 +498,36 @@ app.delete('/deleteGroup', (req, res) => {
     });
 });
 
+// API-Endpoint to update login data
+app.patch('/updateGroup', (req, res) => {
+    const { name, description, group_id } = req.body;
+
+    connection.query(
+        'UPDATE  `Private_Group` SET `name` = ?,`description` = ? WHERE `group_id` = ?',
+        [name, description, group_id],
+        (err, result) => {
+            if (err) {
+                console.error(err);
+            } else {
+                res.send(req.body);
+            }
+        },
+    );
+});
+
+// API-Endpoint to delete group Member
+app.delete('/deleteGroupMember', (req, res) => {
+    const { group_id } = req.body;
+
+    connection.query('DELETE FROM `Private_Group_Member` WHERE `group_id` = ?', [group_id], err => {
+        if (err) {
+            console.error('Error:', err);
+        } else {
+            res.send(req.body);
+        }
+    });
+});
+
 app.listen(port, () => {
     console.log('server runs on http://localhost:' + port);
 });

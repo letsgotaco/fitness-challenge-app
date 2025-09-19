@@ -8,15 +8,21 @@ export default {
             textPrivateGroups2: '',
             groups: [],
             groupMember: [],
-            showPopUpForm: false,
+            showPopUpCreateGroupForm: false,
+            showPopUpEditGroupForm: false,
             showGroupMemberContainer: false,
             groupname: '',
             description: '',
             correctInput: true,
+            newGroupname: '',
+            newDescription: '',
+            correctInput2: '',
             errorMessage: '',
             successMessage: '',
             newGroupId: 0,
+            editedGroupId: 0,
             selectedGroupMember: [],
+            changedGroupMember: [],
         };
     },
     methods: {
@@ -96,10 +102,18 @@ export default {
                 });
         },
         openAndClosePopUp() {
-            this.showPopUpForm = !this.showPopUpForm;
+            this.showPopUpCreateGroupForm = !this.showPopUpCreateGroupForm;
             this.showGroupMemberContainer = false;
         },
-        validateUserInput() {
+        openAndCloseEditGroupForm(event) {
+            this.showPopUpEditGroupForm = !this.showPopUpEditGroupForm;
+
+            if (this.showPopUpEditGroupForm) {
+                this.getPossibleGroupMember();
+                this.editedGroupId = event.target.id;
+            }
+        },
+        validateUserInputCreateGroupForm() {
             if (this.description.length === 0 || this.groupname.length === 0) {
                 this.errorMessage = 'Bitte fülle alle Felder aus!';
                 this.correctInput = false;
@@ -110,7 +124,7 @@ export default {
             }
         },
         createNewGroup() {
-            this.validateUserInput();
+            this.validateUserInputCreateGroupForm();
 
             if (this.correctInput) {
                 fetch('http://localhost:3000/createGroup', {
@@ -138,6 +152,79 @@ export default {
                     .catch(error => {
                         console.error('Fehler:', error);
                     });
+            }
+        },
+        validateUserInputEditGroupForm() {
+            if (this.newDescription.length === 0 || this.newGroupname.length === 0) {
+                this.errorMessage = 'Bitte fülle alle Felder aus!';
+                this.correctInput2 = false;
+                return;
+            } else {
+                this.correctInput2 = true;
+                this.errorMessage = '';
+            }
+        },
+        changeGroupdata() {
+            this.validateUserInputEditGroupForm();
+
+            if (this.correctInput2) {
+                fetch('http://localhost:3000/updateGroup', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: this.newGroupname,
+                        description: this.newDescription,
+                        group_id: this.editedGroupId,
+                    }),
+                })
+                    .then(res => {
+                        if (res.ok) {
+                            this.successMessage = 'Daten erfolgreich abgeändert!';
+                        }
+                    })
+                    .catch(error => console.error('Fehler:', error));
+            }
+        },
+        changeGroupMember() {
+            if (this.changedGroupMember.length > 0) {
+                console.log('res');
+                // Delete old group member
+                fetch(`http://localhost:3000/deleteGroupMember`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        group_id: this.editedGroupId,
+                    }),
+                }).catch(error => {
+                    console.error(error);
+                });
+
+                for (let i = 0; i < this.changedGroupMember.length; i++) {
+                    fetch('http://localhost:3000/addGroupMember', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            group_id: this.editedGroupId,
+                            user_id: this.changedGroupMember[i],
+                        }),
+                    })
+                        .then(res => {
+                            if (res.ok) {
+                                this.successMessage = `Mitglieder erfolgreich geändert!`;
+                                window.location.reload();
+                                return res.json();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Fehler:', error);
+                        });
+                }
             }
         },
         getPossibleGroupMember() {
@@ -258,17 +345,26 @@ export default {
                 >
                     Löschen
                 </button>
+
+                <button
+                    class="group-button"
+                    :id="data.id"
+                    v-if="data.admin === Number(this.userId)"
+                    @click="openAndCloseEditGroupForm"
+                >
+                    Bearbeiten
+                </button>
             </div>
 
             <div class="new-group-card">
                 <h3>Neue Gruppe</h3>
                 <span>Erstelle eine private Gruppe</span>
-                <button class="create-group-button" @click="openAndClosePopUp">+ Gruppe erstellen</button>
+                <button class="create-group-button" @click="openAndClosePopUp">Gruppe erstellen</button>
             </div>
         </div>
     </div>
 
-    <div class="overlay" v-if="this.showPopUpForm">
+    <div class="overlay" v-if="this.showPopUpCreateGroupForm">
         <div class="popup">
             <button class="close-pop-up-button" @click="openAndClosePopUp">X</button>
             <h2>Neue Gruppe erstellen</h2>
@@ -303,6 +399,48 @@ export default {
                 </button>
             </div>
 
+            <div class="error-message">{{ this.errorMessage }}</div>
+            <div class="success-message">{{ this.successMessage }}</div>
+        </div>
+    </div>
+
+    <div class="overlay" v-if="this.showPopUpEditGroupForm">
+        <div class="popup">
+            <button class="close-pop-up-button" @click="openAndCloseEditGroupForm">X</button>
+            <h2>Gruppe bearbeiten</h2>
+            <form>
+                <label for="groupname">Gruppenname</label>
+                <input type="text" id="groupname" name="groupname" v-model="this.newGroupname" />
+
+                <label for="description">Beschreibung</label>
+                <textarea
+                    id="description"
+                    name="description"
+                    rows="4"
+                    v-model="this.newDescription"
+                ></textarea>
+
+                <button type="button" class="create-new-group-button" @click="changeGroupdata">
+                    Speichern
+                </button>
+            </form>
+
+            <h2>Mitglieder hinzufügen</h2>
+
+            <div class="group-member-container">
+                <div
+                    v-for="(data, index) in this.groupMember"
+                    :key="index"
+                    class="group-member-option-container"
+                >
+                    <input type="checkbox" :value="data.user_id" v-model="this.changedGroupMember" />
+                    <span>{{ data.username }}</span>
+                </div>
+            </div>
+
+            <button type="button" class="create-new-group-button" @click="changeGroupMember">
+                Speichern
+            </button>
             <div class="error-message">{{ this.errorMessage }}</div>
             <div class="success-message">{{ this.successMessage }}</div>
         </div>
