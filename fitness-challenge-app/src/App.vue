@@ -104,7 +104,8 @@ textarea {
     font-size: var(--font-size-small-text);
 }
 
-.popup button {
+.popup button,
+.router-link {
     padding: 10px 15px;
     border: none;
     border-radius: 8px;

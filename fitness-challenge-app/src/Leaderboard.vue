@@ -86,7 +86,11 @@ export default {
                     }
                 }
 
-                this.sortLeaderboardByProgress(this.leaderboardData);
+                if (this.leaderboardData.length === 0) {
+                    this.errorMessage = 'Es gibt keine Challenge-Teilnehmer!';
+                } else {
+                    this.sortLeaderboardByProgress(this.leaderboardData);
+                }
             }
         },
         sortLeaderboardByProgress(data) {

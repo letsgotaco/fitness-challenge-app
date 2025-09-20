@@ -232,6 +232,7 @@ export default {
                     ><b>{{ data.title }}</b></span
                 >
                 <span class="no-pointer-events">{{ data.description }}</span>
+                <span class="no-pointer-events">Endet am {{ data.end_date.slice(0, 10) }}</span>
             </div>
             <div class="error-message">{{ this.informationalMessage }}</div>
         </div>
