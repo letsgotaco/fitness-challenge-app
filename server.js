@@ -528,6 +528,40 @@ app.delete('/deleteGroupMember', (req, res) => {
     });
 });
 
+// API-Endpoint to update post
+app.patch('/updatePost', (req, res) => {
+    const { content, post_id } = req.body;
+
+    connection.query(
+        'UPDATE `Feed_Post` SET `content` = ? WHERE `post_id` = ?',
+        [content, post_id],
+        (err, result) => {
+            if (err) {
+                console.error(err);
+            } else {
+                res.send(req.body);
+            }
+        },
+    );
+});
+
+// API-Endpoint to update comment
+app.patch('/updateComment', (req, res) => {
+    const { content, Comment_id } = req.body;
+
+    connection.query(
+        'UPDATE `Comment` SET `content` = ? WHERE `Comment_id` = ?',
+        [content, Comment_id],
+        (err, result) => {
+            if (err) {
+                console.error(err);
+            } else {
+                res.send(req.body);
+            }
+        },
+    );
+});
+
 app.listen(port, () => {
     console.log('server runs on http://localhost:' + port);
 });
