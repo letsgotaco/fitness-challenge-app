@@ -205,6 +205,30 @@ export default {
                 return;
             }
         },
+        deleteChallenge(event) {
+            // Stop event from bubbling up to parent container, where popup is triggered
+            event.stopPropagation();
+
+            let id = Number(event.target.dataset.challengeid);
+
+            fetch(`http://localhost:3000/deleteChallenge`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    challenge_id: id,
+                }),
+            })
+                .then(res => {
+                    if (res.ok) {
+                        window.location.reload();
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        },
     },
     mounted() {
         this.displayChallenges();
@@ -233,6 +257,13 @@ export default {
                 >
                 <span class="no-pointer-events">{{ data.description }}</span>
                 <span class="no-pointer-events">Endet am {{ data.end_date.slice(0, 10) }}</span>
+                <button
+                    v-if="data.created_by === Number(this.userId)"
+                    :data-challengeId="data.challenge_id"
+                    @click="deleteChallenge"
+                >
+                    Löschen
+                </button>
             </div>
             <div class="error-message">{{ this.informationalMessage }}</div>
         </div>

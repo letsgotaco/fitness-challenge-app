@@ -562,6 +562,19 @@ app.patch('/updateComment', (req, res) => {
     );
 });
 
+// API-Endpoint to delete challenge
+app.delete('/deleteChallenge', (req, res) => {
+    const { challenge_id } = req.body;
+
+    connection.query('DELETE FROM `Challenge` WHERE `challenge_id` = ?', [challenge_id], (err, result) => {
+        if (err) {
+            console.error(err);
+        } else {
+            res.send(req.body);
+        }
+    });
+});
+
 app.listen(port, () => {
     console.log('server runs on http://localhost:' + port);
 });
