@@ -575,6 +575,23 @@ app.delete('/deleteChallenge', (req, res) => {
     });
 });
 
+// API-Endpoint to update Challenge
+app.patch('/updateChallenge', (req, res) => {
+    const { title, description, target, end_date, challenge_id } = req.body;
+
+    connection.query(
+        'UPDATE `Challenge` SET `title` = ?,`description` = ?,`target`= ?,`end_date`= ? WHERE `challenge_id` = ?',
+        [title, description, target, end_date, challenge_id],
+        (err, result) => {
+            if (err) {
+                console.error(err);
+            } else {
+                res.send(req.body);
+            }
+        },
+    );
+});
+
 app.listen(port, () => {
     console.log('server runs on http://localhost:' + port);
 });

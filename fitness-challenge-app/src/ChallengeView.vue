@@ -9,8 +9,8 @@ export default {
             currentChallengeDescription: '',
             correctInput: true,
             informationalMessage: '',
-            errorMessage: '',
-            successMessage: '',
+            errorMessageCreateChallengeForm: '',
+            successMessageCreateChallengeForm: '',
             challengeTitle: '',
             challengeDescription: '',
             challengeGoal: '',
@@ -22,26 +22,35 @@ export default {
             correctInputProgressForm: true,
             errorMessageProgressForm: '',
             successMessageProgressForm: '',
+            showPopUpEditChallengeForm: false,
+            newChallengeTitle: '',
+            newChallengeDescription: '',
+            newDeadline: '',
+            newChallengeGoal: '',
+            correctInput2: true,
+            errorMessageEditChallengeForm: '',
+            successMessageEditChallengeForm: '',
+            editedChallengeId: 0,
         };
     },
     methods: {
-        validateUserInput() {
+        validateUserInputCreateChallengeForm() {
             if (
                 this.challengeTitle.length === 0 ||
                 this.challengeDescription.length === 0 ||
                 this.challengeGoal.length === 0 ||
                 this.deadline.length === 0
             ) {
-                this.errorMessage = 'Bitte fülle alle Felder aus!';
+                this.errorMessageCreateChallengeForm = 'Bitte fülle alle Felder aus!';
                 this.correctInput = false;
                 return;
             } else {
                 this.correctInput = true;
-                this.errorMessage = '';
+                this.errorMessageCreateChallengeForm = '';
             }
         },
         createNewChallenge() {
-            this.validateUserInput();
+            this.validateUserInputCreateChallengeForm();
 
             if (this.correctInput) {
                 fetch('http://localhost:3000/createChallenge', {
@@ -60,7 +69,7 @@ export default {
                 })
                     .then(res => {
                         if (res.ok) {
-                            this.successMessage = 'Challenge erfolgreich erstellt!';
+                            this.successMessageCreateChallengeForm = 'Challenge erfolgreich erstellt!';
                             this.displayChallenges();
                             return res.json();
                         }
@@ -71,6 +80,9 @@ export default {
             }
         },
         displayChallenges() {
+            // Reset Array to not display challenges twice
+            this.challenges = [];
+
             fetch(`http://localhost:3000/getGroupChallenges/${encodeURIComponent(parseInt(this.groupId))}`)
                 .then(res => {
                     if (res.ok) {
@@ -222,12 +234,64 @@ export default {
             })
                 .then(res => {
                     if (res.ok) {
-                        window.location.reload();
+                        this.displayChallenges();
                     }
                 })
                 .catch(error => {
                     console.error(error);
                 });
+        },
+        openAndClosePopUpEditChallengeForm(event) {
+            // Stop event from bubbling up to parent container, where popup is triggered
+            event.stopPropagation();
+
+            this.showPopUpEditChallengeForm = !this.showPopUpEditChallengeForm;
+            let id = event.target.dataset.challengeid;
+
+            if (id !== undefined) {
+                this.editedChallengeId = Number(id);
+            }
+        },
+        validateUserInputEditChallengeForm() {
+            if (
+                this.newChallengeTitle.length === 0 ||
+                this.newChallengeDescription.length === 0 ||
+                this.newChallengeGoal.length === 0 ||
+                this.newDeadline.length === 0
+            ) {
+                this.errorMessageEditChallengeForm = 'Bitte fülle alle Felder aus!';
+                this.correctInput2 = false;
+                return;
+            } else {
+                this.correctInput2 = true;
+                this.errorMessageEditChallengeForm = '';
+            }
+        },
+        changeChallengeData() {
+            this.validateUserInputEditChallengeForm();
+
+            if (this.correctInput2) {
+                fetch('http://localhost:3000/updateChallenge', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: this.newChallengeTitle,
+                        description: this.newChallengeDescription,
+                        target: this.newChallengeGoal,
+                        end_date: this.newDeadline,
+                        challenge_id: this.editedChallengeId,
+                    }),
+                })
+                    .then(res => {
+                        if (res.ok) {
+                            this.successMessageEditChallengeForm = 'Daten erfolgreich abgeändert!';
+                            this.displayChallenges();
+                        }
+                    })
+                    .catch(error => console.error('Fehler:', error));
+            }
         },
     },
     mounted() {
@@ -256,7 +320,17 @@ export default {
                     ><b>{{ data.title }}</b></span
                 >
                 <span class="no-pointer-events">{{ data.description }}</span>
-                <span class="no-pointer-events">Endet am {{ data.end_date.slice(0, 10) }}</span>
+                <span class="no-pointer-events">{{ data.target }}</span>
+                <span class="no-pointer-events"
+                    >Endet am {{ data.end_date.slice(0, 10) }} um {{ data.end_date.slice(11, 16) }} Uhr</span
+                >
+                <button
+                    v-if="data.created_by === Number(this.userId)"
+                    :data-challengeId="data.challenge_id"
+                    @click="openAndClosePopUpEditChallengeForm"
+                >
+                    Bearbeiten
+                </button>
                 <button
                     v-if="data.created_by === Number(this.userId)"
                     :data-challengeId="data.challenge_id"
@@ -301,12 +375,46 @@ export default {
 
         <button type="button" @click="createNewChallenge">Erstellen</button>
 
-        <div class="error-message">{{ this.errorMessage }}</div>
-        <div class="success-message">{{ this.successMessage }}</div>
+        <div class="error-message">{{ this.errorMessageCreateChallengeForm }}</div>
+        <div class="success-message">{{ this.successMessageCreateChallengeForm }}</div>
     </form>
+
+    <div class="overlay" v-if="this.showPopUpEditChallengeForm">
+        <div class="popup">
+            <button class="close-pop-up-button" @click="openAndClosePopUpEditChallengeForm">X</button>
+            <h2>Challenge bearbeiten</h2>
+            <form>
+                <label for="title">Titel</label>
+                <input type="text" id="title" name="title" v-model="this.newChallengeTitle" />
+
+                <label for="description">Beschreibung</label>
+                <textarea
+                    id="description"
+                    name="description"
+                    rows="3"
+                    v-model="this.newChallengeDescription"
+                ></textarea>
+
+                <label for="goal">Ziel</label>
+                <input type="text" id="goal" name="goal" v-model="this.newChallengeGoal" />
+
+                <label for="date">Enddatum</label>
+                <input type="date" id="date" name="date" :min="this.currentDate" v-model="this.newDeadline" />
+
+                <button type="button" class="centered-button" @click="changeChallengeData">Speichern</button>
+
+                <div class="error-message">{{ this.errorMessageEditChallengeForm }}</div>
+                <div class="success-message">{{ this.successMessageEditChallengeForm }}</div>
+            </form>
+        </div>
+    </div>
 </template>
 
 <style scoped>
+.centered-button {
+    margin-left: 30%;
+}
+
 .card {
     display: flex;
     align-items: center;

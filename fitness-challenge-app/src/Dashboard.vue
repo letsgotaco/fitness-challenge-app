@@ -189,7 +189,6 @@ export default {
         },
         changeGroupMember() {
             if (this.changedGroupMember.length > 0) {
-                console.log('res');
                 // Delete old group member
                 fetch(`http://localhost:3000/deleteGroupMember`, {
                     method: 'DELETE',
