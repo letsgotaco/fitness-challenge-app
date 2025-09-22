@@ -168,26 +168,28 @@ export default {
                         description: this.currentChallengeDescription,
                         icon_url: 'https://cdn-icons-png.flaticon.com/512/5182/5182773.png',
                     }),
-                }).catch(error => {
-                    console.error(error);
-                });
-
-                let badgeId = await this.getBadgeId();
-
-                fetch('http://localhost:3000/createUserBadge', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        user_id: this.userId,
-                        badge_id: badgeId,
-                    }),
-                }).catch(error => {
-                    console.error(error);
-                });
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        fetch('http://localhost:3000/createUserBadge', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                user_id: this.userId,
+                                badge_id: data.badge_id,
+                            }),
+                        }).catch(error => {
+                            console.error(error);
+                        });
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
             }
         },
+
         async CheckUserProgress() {
             try {
                 const res = await fetch(
@@ -204,19 +206,6 @@ export default {
             }
         },
 
-        async getBadgeId() {
-            try {
-                const res = await fetch(
-                    `http://localhost:3000/getSpecificBadgeId/${encodeURIComponent(this.currentChallengeName)}`,
-                );
-
-                const data = await res.json();
-                return data[0].badge_id;
-            } catch (error) {
-                console.error(error);
-                return;
-            }
-        },
         deleteChallenge(event) {
             // Stop event from bubbling up to parent container, where popup is triggered
             event.stopPropagation();
@@ -303,44 +292,50 @@ export default {
 </script>
 
 <template>
-    <div class="card">
+    <div class="active-challenge-container">
         <div>
             <h3>Aktive Challenges</h3>
 
-            <div
-                class="challenge"
-                v-for="(data, index) in this.challenges"
-                :key="index"
-                @click="toggleProgressForm"
-                :id="data.challenge_id"
-                :data-challengeName="data.title"
-                :data-challengeDescription="data.description"
-            >
-                <span class="no-pointer-events"
-                    ><b>{{ data.title }}</b></span
+            <div class="wrapper-container">
+                <div
+                    class="challenge"
+                    v-for="(data, index) in this.challenges"
+                    :key="index"
+                    @click="toggleProgressForm"
+                    :id="data.challenge_id"
+                    :data-challengeName="data.title"
+                    :data-challengeDescription="data.description"
                 >
-                <span class="no-pointer-events">{{ data.description }}</span>
-                <span class="no-pointer-events">{{ data.target }}</span>
-                <span class="no-pointer-events"
-                    >Endet am {{ data.end_date.slice(0, 10) }} um {{ data.end_date.slice(11, 16) }} Uhr</span
-                >
-                <button
-                    v-if="data.created_by === Number(this.userId)"
-                    :data-challengeId="data.challenge_id"
-                    @click="openAndClosePopUpEditChallengeForm"
-                >
-                    Bearbeiten
-                </button>
-                <button
-                    v-if="data.created_by === Number(this.userId)"
-                    :data-challengeId="data.challenge_id"
-                    @click="deleteChallenge"
-                >
-                    Löschen
-                </button>
+                    <span class="no-pointer-events"
+                        ><b>{{ data.title }}</b></span
+                    >
+                    <span class="no-pointer-events">{{ data.description }}</span>
+                    <span class="no-pointer-events">{{ data.target }}</span>
+                    <span class="no-pointer-events"
+                        >Endet am {{ data.end_date.slice(0, 10) }} um
+                        {{ data.end_date.slice(11, 16) }} Uhr</span
+                    >
+                    <div class="button-container">
+                        <button
+                            v-if="data.created_by === Number(this.userId)"
+                            :data-challengeId="data.challenge_id"
+                            @click="openAndClosePopUpEditChallengeForm"
+                        >
+                            Bearbeiten
+                        </button>
+                        <button
+                            v-if="data.created_by === Number(this.userId)"
+                            :data-challengeId="data.challenge_id"
+                            @click="deleteChallenge"
+                        >
+                            Löschen
+                        </button>
+                    </div>
+                </div>
+                <div class="error-message">{{ this.informationalMessage }}</div>
             </div>
-            <div class="error-message">{{ this.informationalMessage }}</div>
         </div>
+
         <div v-if="this.showProgressForm">
             <form>
                 <h3>Fortschritt eintragen</h3>
@@ -401,7 +396,7 @@ export default {
                 <label for="date">Enddatum</label>
                 <input type="date" id="date" name="date" :min="this.currentDate" v-model="this.newDeadline" />
 
-                <button type="button" class="centered-button" @click="changeChallengeData">Speichern</button>
+                <button type="button" @click="changeChallengeData">Speichern</button>
 
                 <div class="error-message">{{ this.errorMessageEditChallengeForm }}</div>
                 <div class="success-message">{{ this.successMessageEditChallengeForm }}</div>
@@ -411,38 +406,46 @@ export default {
 </template>
 
 <style scoped>
-.centered-button {
-    margin-left: 30%;
+.wrapper-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    width: 97%;
 }
 
-.card {
+.button-container {
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    width: 100%;
+}
+
+.active-challenge-container {
+    display: flex;
+    gap: 30px;
     cursor: pointer;
     margin-top: 30px;
     background: var(--white);
     border-radius: 12px;
     padding: 16px;
-    max-width: 350px;
 }
 
 .challenge {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
     flex-direction: column;
     gap: 15px;
     border-radius: 20px;
     padding: 12px;
     margin-bottom: 12px;
-    border: 1px solid var(--grey);
     width: fit-content;
     margin-top: 20px;
+    box-shadow: 0 0 15px var(--black-transparent-2);
 }
 
 form {
     background: var(--white);
-    padding: 16px;
+    padding: 0 16px 16px 16px;
     border-radius: 20px;
     max-width: 350px;
 }

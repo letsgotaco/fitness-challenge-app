@@ -263,6 +263,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    box-shadow: 0 0 15px var(--black-transparent-2);
 }
 
 .badge-row-container,
@@ -270,7 +271,6 @@ export default {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
-    padding-top: 20px;
 }
 
 .challenge-row-container {
@@ -284,6 +284,7 @@ export default {
     align-items: center;
     justify-content: center;
     font-size: var(--font-size-text);
+    padding-top: 20px;
 }
 
 .badge-image {

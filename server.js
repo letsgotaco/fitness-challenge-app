@@ -359,18 +359,24 @@ app.post('/addProgress', (req, res) => {
     );
 });
 
-// API-Endpoint to create new badge if necessay
+// API-Endpoint to create new badge if necessary
 app.post('/createBadge', async (req, res) => {
     const { name, description, icon_url } = req.body;
 
     connection.query(
-        'INSERT IGNORE INTO `Badge` (name, description, icon_url) VALUES (?, ?, ?)',
+        'INSERT INTO `Badge` (name, description, icon_url) VALUES (?, ?, ?)',
         [name, description, icon_url],
         (err, result) => {
             if (err) {
                 console.error(err);
+                return res.status(500).json({ error: 'Database error' });
             } else {
-                res.send(req.body);
+                res.json({
+                    badge_id: result.insertId,
+                    name,
+                    description,
+                    icon_url,
+                });
             }
         },
     );
@@ -391,22 +397,6 @@ app.post('/createUserBadge', (req, res) => {
             }
         },
     );
-});
-
-app.get('/getSpecificBadgeId/:name', async (req, res) => {
-    const { name } = req.params;
-
-    try {
-        connection.execute('SELECT `badge_id` FROM `Badge` WHERE `name` = ?', [name], (err, rows) => {
-            if (err) {
-                console.error(err);
-            }
-
-            res.json(rows);
-        });
-    } catch (err) {
-        console.error(err);
-    }
 });
 
 app.get('/getUserProgress/:user_id/:challenge_id', (req, res) => {

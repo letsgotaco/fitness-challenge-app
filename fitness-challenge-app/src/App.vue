@@ -15,7 +15,8 @@
     --light-blue: #38bdf8;
     --light-blue-2: #3b82f6;
     --black: #000000;
-    --black-transparent: rgba(0, 0, 0, 0.499) 0;
+    --black-transparent: rgba(0, 0, 0, 0.499);
+    --black-transparent-2: rgba(0, 0, 0, 0.1);
     --red: #ff0000;
 
     /* font-sizes */
@@ -58,13 +59,13 @@ h3 {
 .error-message {
     font-size: var(--font-size-text);
     color: var(--red);
-    padding: 20px 0 0 20%;
+    padding-top: 20px;
 }
 
 .success-message {
     font-size: var(--font-size-text);
     color: var(--light-blue);
-    padding: 20px 0 0 20%;
+    padding-top: 20px;
 }
 
 textarea {

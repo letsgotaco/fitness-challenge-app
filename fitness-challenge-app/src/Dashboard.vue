@@ -356,8 +356,11 @@ export default {
             </div>
 
             <div class="new-group-card">
-                <h3>Neue Gruppe</h3>
-                <span>Erstelle eine private Gruppe</span>
+                <div>
+                    <h3>Neue Gruppe</h3>
+                    <span>Erstelle hier eine neue private Gruppe für deine Freunde.</span>
+                </div>
+
                 <button class="create-group-button" @click="openAndClosePopUp">Gruppe erstellen</button>
             </div>
         </div>
@@ -460,10 +463,6 @@ export default {
     justify-content: center;
 }
 
-.create-new-group-button {
-    margin-left: 35%;
-}
-
 .challenge-counter {
     font-size: var(--font-size-big-text);
 }
@@ -479,6 +478,7 @@ export default {
     padding: 20px;
     border-radius: 20px;
     width: fit-content;
+    box-shadow: 0 0 15px var(--black-transparent-2);
 }
 
 .groups {
@@ -518,13 +518,13 @@ export default {
 
 .new-group-card {
     background-color: var(--white);
-    border: 1px solid var(--grey);
     padding: 20px;
     border-radius: 20px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     gap: 15px;
+    box-shadow: 0 0 15px var(--black-transparent-2);
 }
 
 .create-group-button {

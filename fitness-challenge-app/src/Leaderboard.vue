@@ -135,6 +135,7 @@ export default {
     width: 500px;
     background-color: var(--white);
     font-size: var(--font-size-small-text);
+    width: 97%;
 }
 
 .table-header,

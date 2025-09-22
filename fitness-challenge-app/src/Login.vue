@@ -228,7 +228,7 @@ export default {
     padding: 32px;
     border-radius: 20px;
     width: 350px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 15px var(--black-transparent-2);
 }
 
 .title {
