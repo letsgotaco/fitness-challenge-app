@@ -241,8 +241,8 @@ export default {
 
                 <button type="button" @click="changeLoginData">ändern</button>
 
-                <div class="error-message">{{ this.errorMessage }}</div>
-                <div class="success-message">{{ this.successMessage }}</div>
+                <div class="error-message" v-if="errorMessage">{{ this.errorMessage }}</div>
+                <div class="success-message" v-if="successMessage">{{ this.successMessage }}</div>
             </form>
         </div>
 
@@ -264,6 +264,15 @@ export default {
     align-items: center;
     justify-content: space-between;
     box-shadow: 0 0 15px var(--black-transparent-2);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.challenge-container:hover {
+    background: var(--light-blue-2);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px var(--black-transparent-2);
 }
 
 .badge-row-container,
@@ -284,7 +293,17 @@ export default {
     align-items: center;
     justify-content: center;
     font-size: var(--font-size-text);
-    padding-top: 20px;
+    background: var(--white);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px var(--black-transparent-1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.badge-container:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px var(--black-transparent-2);
 }
 
 .badge-image {
@@ -307,6 +326,9 @@ export default {
 
 .section {
     padding: 20px;
+    background: var(--grey-1);
+    margin-bottom: 20px;
+    border-radius: 10px;
 }
 
 form {
@@ -315,19 +337,31 @@ form {
     padding-top: 20px;
 }
 
+form label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
 form input {
-    width: fit-content;
+    width: 300px;
     padding: 12px;
     margin-bottom: 16px;
-    border: none;
-    border-radius: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     background: var(--white);
     font-size: var(--font-size-small-text);
+    transition: all 0.3s ease;
+}
+
+form input:hover {
+    border-color: var(--light-blue);
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    transform: translateY(-1px);
 }
 
 button {
     padding: 10px 15px;
-    border: none;
+    border: 1px solid #ddd;
     border-radius: 8px;
     background: linear-gradient(to bottom right, var(--light-blue), var(--light-blue-2));
     color: var(--white);
@@ -335,10 +369,72 @@ button {
     cursor: pointer;
     margin-top: 15px;
     width: fit-content;
+    transition: all 0.3s ease;
 }
 
-.error-message,
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.error-message {
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    background: #f8d7da;
+    color: #721c24;
+}
+
 .success-message {
-    padding: 0;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    background: #d4edda;
+    color: #155724;
+}
+
+@media (max-width: 768px) {
+    .profile-container {
+        margin-top: 20px;
+    }
+
+    .profile-header {
+        padding: 15px;
+        font-size: var(--font-size-text);
+    }
+
+    .section {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .challenge-container {
+        width: 100%;
+        padding: 15px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .badge-row-container {
+        justify-content: center;
+    }
+
+    .badge-container {
+        width: 150px;
+        padding: 15px;
+    }
+
+    .badge-image {
+        width: 80px;
+    }
+
+    form input {
+        width: 250px;
+    }
+
+    button {
+        width: fit-content;
+    }
 }
 </style>
