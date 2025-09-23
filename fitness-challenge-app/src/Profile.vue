@@ -257,7 +257,7 @@ export default {
 <style scoped>
 .challenge-container {
     background-color: var(--grey-2);
-    width: 600px;
+    max-width: 600px;
     padding: 20px;
     border-radius: 20px;
     display: flex;
@@ -275,11 +275,15 @@ export default {
     box-shadow: 0 4px 20px var(--black-transparent-2);
 }
 
-.badge-row-container,
 .challenge-row-container {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
+}
+
+.badge-row-container {
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .challenge-row-container {
@@ -351,50 +355,5 @@ form input {
     background: var(--white);
     font-size: var(--font-size-small-text);
     transition: all 0.3s ease;
-}
-
-@media (max-width: 768px) {
-    .profile-container {
-        margin-top: 20px;
-    }
-
-    .profile-header {
-        padding: 15px;
-        font-size: var(--font-size-text);
-    }
-
-    .section {
-        padding: 15px;
-        margin-bottom: 15px;
-    }
-
-    .challenge-container {
-        width: 100%;
-        padding: 15px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-
-    .badge-row-container {
-        justify-content: center;
-    }
-
-    .badge-container {
-        width: 150px;
-        padding: 15px;
-    }
-
-    .badge-image {
-        width: 80px;
-    }
-
-    form input {
-        width: 250px;
-    }
-
-    button {
-        width: fit-content;
-    }
 }
 </style>

@@ -169,4 +169,11 @@ form textarea:hover {
     box-shadow: 0 0 5px var(--light-blue-2);
     transform: translateY(-1px);
 }
+
+/* Smartphones */
+@media screen and (max-width: 767px) {
+    .popup {
+        max-width: 70%;
+    }
+}
 </style>

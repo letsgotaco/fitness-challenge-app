@@ -424,7 +424,6 @@ export default {
 <style scoped>
 .wrapper-container {
     display: flex;
-    flex-wrap: wrap;
     gap: 30px;
     width: 97%;
 }
@@ -483,5 +482,17 @@ textarea {
 button:disabled {
     background: var(--grey);
     cursor: not-allowed;
+}
+
+/* Smartphones */
+@media screen and (max-width: 767px) {
+    .wrapper-container {
+        flex-direction: column;
+        gap: 0px;
+    }
+
+    .active-challenge-container {
+        flex-direction: column;
+    }
 }
 </style>

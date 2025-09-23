@@ -423,7 +423,6 @@ export default {
     background: var(--white);
     border-radius: 12px;
     padding: 20px;
-    width: 400px;
     margin-top: 30px;
     box-shadow: 0 0 15px var(--black-transparent-2);
     width: 97%;
@@ -458,5 +457,19 @@ export default {
     padding: 12px;
     font-weight: var(--font-weight-normal);
     width: fit-content;
+}
+
+/* Smartphones */
+@media screen and (max-width: 767px) {
+    .news-feed-container {
+        width: 90%;
+    }
+}
+
+/* Tablets */
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+    .news-feed-container {
+        width: 95%;
+    }
 }
 </style>

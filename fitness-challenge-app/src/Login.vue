@@ -230,7 +230,6 @@ export default {
     background: var(--white);
     padding: 32px;
     border-radius: 20px;
-    width: 350px;
     box-shadow: 0 0 15px var(--black-transparent-2);
 }
 

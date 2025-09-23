@@ -516,4 +516,15 @@ export default {
     border-radius: 10px;
     cursor: pointer;
 }
+
+/* Smartphones */
+@media screen and (max-width: 767px) {
+    .groups {
+        flex-direction: column;
+    }
+
+    .no-group-found-container {
+        width: fit-content;
+    }
+}
 </style>
