@@ -191,24 +191,27 @@ export default {
 <template>
     <div class="container">
         <div class="form-box">
-          <h1 class="title">FitFriends <br> Gemeinsam Challenges meistern</h1>
-          <form>
-              <label for="email">E-Mail</label>
-              <input type="email" id="email" placeholder="you@example.com" v-model="this.emailInput" />
+            <h1 class="title">
+                FitFriends <br />
+                Gemeinsam Challenges meistern
+            </h1>
+            <form>
+                <label for="email">E-Mail</label>
+                <input type="email" id="email" placeholder="you@example.com" v-model="this.emailInput" />
 
-              <label for="password">Passwort</label>
-              <input type="password" id="password" placeholder="••••••••" v-model="this.passwordInput" />
+                <label for="password">Passwort</label>
+                <input type="password" id="password" placeholder="••••••••" v-model="this.passwordInput" />
 
-              <label for="name">Nutzername</label>
-              <input id="name" placeholder="Dein Name" v-model="this.usernameInput" />
+                <label for="name">Nutzername</label>
+                <input id="name" placeholder="Dein Name" v-model="this.usernameInput" />
 
-              <div class="button-group">
-                  <button type="button" class="button login" @click="login">Login</button>
-                  <button type="button" class="button register" @click="register">Registrieren</button>
-              </div>
+                <div class="button-group">
+                    <button type="button" class="button" @click="login">Login</button>
+                    <button type="button" class="button-2" @click="register">Registrieren</button>
+                </div>
 
-              <div class="error-message" v-if="errorMessage">{{ this.errorMessage }}</div>
-              <div class="success-message" v-if="successMessage">{{ this.successMessage }}</div>
+                <div class="error-message" v-if="errorMessage">{{ this.errorMessage }}</div>
+                <div class="success-message" v-if="successMessage">{{ this.successMessage }}</div>
             </form>
         </div>
     </div>
@@ -245,55 +248,23 @@ export default {
 form label {
     display: block;
     margin: 8px 0 3px;
-    color: #333;
+    color: var(--black);
 }
 
 form input {
     width: calc(100% - 25px);
     padding: 12px;
     margin-bottom: 16px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--grey);
     border-radius: 8px;
     background: var(--white);
     font-size: var(--font-size-small-text);
     transition: all 0.3s ease;
-}
-
-form input:hover {
-    border-color: var(--light-blue);
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-    transform: translateY(-1px);
 }
 
 .button-group {
     margin-top: 16px;
     display: flex;
     justify-content: space-between;
-}
-
-.button {
-    padding: 12px 24px;
-    font-size: var(--font-size-small-text);
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    cursor: pointer;
-    flex: 1;
-    margin: 0 5px;
-    transition: all 0.3s ease;
-}
-
-.button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.login {
-    background: linear-gradient(90deg, var(--light-blue), var(--light-blue-2));
-    color: var(--white);
-}
-
-.register {
-    background: var(--white);
-    color: var(--black);
 }
 </style>

@@ -101,7 +101,12 @@ export default {
     font-weight: 500;
     cursor: pointer;
     background: var(--grey);
-    transition: background 0.3s;
+    transition: all 0.3s ease;
+}
+
+.tab-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--black-transparent-2);
 }
 
 .active-tab-button {

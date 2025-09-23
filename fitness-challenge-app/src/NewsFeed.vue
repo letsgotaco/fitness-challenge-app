@@ -294,8 +294,8 @@ export default {
             <h3>Neue Nachricht erstellen</h3>
             <textarea class="textarea" rows="4" v-model="this.contentPost"></textarea>
             <button class="button" @click="postNewsFeed">Posten</button>
-            <div class="error-message">{{ this.errorMessage }}</div>
-            <div class="success-message">{{ this.successMessage }}</div>
+            <div class="error-message" v-if="this.errorMessage">{{ this.errorMessage }}</div>
+            <div class="success-message" v-if="this.successMessage">{{ this.successMessage }}</div>
         </div>
 
         <div class="post-container" v-for="(data, index) in this.posts" :key="index">
@@ -306,7 +306,7 @@ export default {
                 <div class="comment-interactions-container">
                     <button
                         type="button"
-                        class="small-button"
+                        class="small-button button"
                         :id="data.id"
                         @click="deleteComment"
                         v-if="data.user === Number(this.userId)"
@@ -315,7 +315,7 @@ export default {
                     </button>
                     <button
                         type="button"
-                        class="small-button"
+                        class="small-button button"
                         :id="data.id"
                         @click="openAndClosePopUpEditCommentForm"
                         v-if="data.user === Number(this.userId)"
@@ -349,41 +349,51 @@ export default {
 
     <div class="overlay" v-if="this.showPopUpCreateCommentForm">
         <div class="popup">
-            <button class="close-btn close-pop-up-button" @click="openAndClosePopUpCreateCommentForm">
-                X
-            </button>
+            <button class="button right-position" @click="openAndClosePopUpCreateCommentForm">X</button>
             <div class="write-comment-container">
                 <h3>Kommentar schreiben</h3>
                 <textarea class="textarea" rows="4" v-model="this.contentComment"></textarea>
                 <button class="button" @click="postComment">Posten</button>
-                <div class="error-message">{{ this.errorMessagePopUpCreateCommentForm }}</div>
-                <div class="success-message">{{ this.successMessagePopUpCreateCommentForm }}</div>
+                <div class="error-message" v-if="this.errorMessagePopUpCreateCommentForm">
+                    {{ this.errorMessagePopUpCreateCommentForm }}
+                </div>
+                <div class="success-message" v-if="this.successMessagePopUpCreateCommentForm">
+                    {{ this.successMessagePopUpCreateCommentForm }}
+                </div>
             </div>
         </div>
     </div>
 
     <div class="overlay" v-if="this.showPopUpEditCommentForm">
         <div class="popup">
-            <button class="close-btn close-pop-up-button" @click="openAndClosePopUpEditCommentForm">X</button>
+            <button class="button right-position" @click="openAndClosePopUpEditCommentForm">X</button>
             <div class="edit-comment-container">
                 <h3>Kommentar bearbeiten</h3>
                 <textarea class="textarea" rows="4" v-model="this.contentEditedComment"></textarea>
                 <button class="button" @click="editComment">Posten</button>
-                <div class="error-message">{{ this.errorMessagePopUpEditCommentForm }}</div>
-                <div class="success-message">{{ this.successMessagePopUpEditCommentForm }}</div>
+                <div class="error-message" v-if="this.errorMessagePopUpEditCommentForm">
+                    {{ this.errorMessagePopUpEditCommentForm }}
+                </div>
+                <div class="success-message" v-if="this.successMessagePopUpEditCommentForm">
+                    {{ this.successMessagePopUpEditCommentForm }}
+                </div>
             </div>
         </div>
     </div>
 
     <div class="overlay" v-if="this.showPopUpEditPostForm">
         <div class="popup">
-            <button class="close-btn close-pop-up-button" @click="openAndClosePopUpEditPostForm">X</button>
+            <button class="button right-position" @click="openAndClosePopUpEditPostForm">X</button>
             <h3>Post bearbeiten</h3>
             <div class="edit-post-container">
                 <textarea class="textarea" rows="4" v-model="this.contentEditedPost"></textarea>
                 <button class="button" @click="editPost">Posten</button>
-                <div class="error-message">{{ this.errorMessagePopUpEditPostForm }}</div>
-                <div class="success-message">{{ this.successMessagePopUpEditPostForm }}</div>
+                <div class="error-message" v-if="this.errorMessagePopUpEditPostForm">
+                    {{ this.errorMessagePopUpEditPostForm }}
+                </div>
+                <div class="success-message" v-if="this.successMessagePopUpEditPostForm">
+                    {{ this.successMessagePopUpEditPostForm }}
+                </div>
             </div>
         </div>
     </div>
@@ -427,26 +437,9 @@ export default {
     font-size: var(--font-size-small-text);
 }
 
-.button {
-    margin: 10px 10px 0 0;
-    padding: 10px 13px;
-    border: none;
-    border-radius: 8px;
-    background: linear-gradient(to bottom right, var(--light-blue), var(--light-blue-2));
-    color: var(--white);
-    font-weight: var(--font-weight-bold);
-    cursor: pointer;
-    font-size: var(--font-size-small-text);
-}
-
 .small-button {
     padding: 5px;
-    border: none;
-    border-radius: 8px;
-    background: linear-gradient(to bottom right, var(--light-blue), var(--light-blue-2));
-    color: var(--white);
-    cursor: pointer;
-    font-size: var(--font-size-small-text);
+    transition: all 0.3s ease;
 }
 
 .post-container {

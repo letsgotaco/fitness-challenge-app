@@ -317,6 +317,7 @@ export default {
                     >
                     <div class="button-container">
                         <button
+                            class="button"
                             v-if="data.created_by === Number(this.userId)"
                             :data-challengeId="data.challenge_id"
                             @click="openAndClosePopUpEditChallengeForm"
@@ -326,13 +327,16 @@ export default {
                         <button
                             v-if="data.created_by === Number(this.userId)"
                             :data-challengeId="data.challenge_id"
+                            class="button"
                             @click="deleteChallenge"
                         >
                             Löschen
                         </button>
                     </div>
                 </div>
-                <div class="error-message">{{ this.informationalMessage }}</div>
+                <div class="error-message" v-if="this.informationalMessage">
+                    {{ this.informationalMessage }}
+                </div>
             </div>
         </div>
 
@@ -343,12 +347,16 @@ export default {
                 <label for="progress">Fortschritt</label>
                 <input type="text" id="progress" name="progress" v-model="this.progress" />
 
-                <button ref="saveProgressButton" type="button" @click="saveChallengeProgress">
+                <button ref="saveProgressButton" type="button" class="button" @click="saveChallengeProgress">
                     Speichern
                 </button>
 
-                <div class="error-message">{{ this.errorMessageProgressForm }}</div>
-                <div class="success-message">{{ this.successMessageProgressForm }}</div>
+                <div class="error-message" v-if="this.errorMessageProgressForm">
+                    {{ this.errorMessageProgressForm }}
+                </div>
+                <div class="success-message" v-if="this.successMessageProgressForm">
+                    {{ this.successMessageProgressForm }}
+                </div>
             </form>
         </div>
     </div>
@@ -368,15 +376,19 @@ export default {
         <label for="date">Enddatum</label>
         <input type="date" id="date" name="date" :min="this.currentDate" v-model="this.deadline" />
 
-        <button type="button" @click="createNewChallenge">Erstellen</button>
+        <button type="button" class="button" @click="createNewChallenge">Erstellen</button>
 
-        <div class="error-message">{{ this.errorMessageCreateChallengeForm }}</div>
-        <div class="success-message">{{ this.successMessageCreateChallengeForm }}</div>
+        <div class="error-message" v-if="this.errorMessageCreateChallengeForm">
+            {{ this.errorMessageCreateChallengeForm }}
+        </div>
+        <div class="success-message" v-if="this.successMessageCreateChallengeForm">
+            {{ this.successMessageCreateChallengeForm }}
+        </div>
     </form>
 
     <div class="overlay" v-if="this.showPopUpEditChallengeForm">
         <div class="popup">
-            <button class="close-pop-up-button" @click="openAndClosePopUpEditChallengeForm">X</button>
+            <button class="button right-position" @click="openAndClosePopUpEditChallengeForm">X</button>
             <h2>Challenge bearbeiten</h2>
             <form>
                 <label for="title">Titel</label>
@@ -396,10 +408,14 @@ export default {
                 <label for="date">Enddatum</label>
                 <input type="date" id="date" name="date" :min="this.currentDate" v-model="this.newDeadline" />
 
-                <button type="button" @click="changeChallengeData">Speichern</button>
+                <button type="button" class="button" @click="changeChallengeData">Speichern</button>
 
-                <div class="error-message">{{ this.errorMessageEditChallengeForm }}</div>
-                <div class="success-message">{{ this.successMessageEditChallengeForm }}</div>
+                <div class="error-message" v-if="this.errorMessageEditChallengeForm">
+                    {{ this.errorMessageEditChallengeForm }}
+                </div>
+                <div class="success-message" v-if="this.successMessageEditChallengeForm">
+                    {{ this.successMessageEditChallengeForm }}
+                </div>
             </form>
         </div>
     </div>
@@ -462,17 +478,6 @@ textarea {
     border: 1px solid var(--grey);
     border-radius: 8px;
     font-size: var(--font-size-small-text);
-}
-
-button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 8px;
-    background: linear-gradient(to bottom right, var(--light-blue), var(--light-blue-2));
-    color: var(--white);
-    font-size: var(--font-size-small-text);
-    cursor: pointer;
-    margin-top: 15px;
 }
 
 button:disabled {

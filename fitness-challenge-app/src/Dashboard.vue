@@ -333,11 +333,11 @@ export default {
                 <span>{{ data.description }}</span>
 
                 <!-- id is used to set groupname in groupview component. DO NOT REMOVE -->
-                <button class="group-button" :id="data.name" :value="data.id" @click="setGroupname">
+                <button class="button-2" :id="data.name" :value="data.id" @click="setGroupname">
                     Zur Gruppe
                 </button>
                 <button
-                    class="group-button"
+                    class="button-2"
                     :id="data.id"
                     v-if="data.admin === Number(this.userId)"
                     @click="deleteGroup"
@@ -346,7 +346,7 @@ export default {
                 </button>
 
                 <button
-                    class="group-button"
+                    class="button-2"
                     :id="data.id"
                     v-if="data.admin === Number(this.userId)"
                     @click="openAndCloseEditGroupForm"
@@ -361,14 +361,14 @@ export default {
                     <span>Erstelle hier eine neue private Gruppe für deine Freunde.</span>
                 </div>
 
-                <button class="create-group-button" @click="openAndClosePopUp">Gruppe erstellen</button>
+                <button class="button" @click="openAndClosePopUp">Gruppe erstellen</button>
             </div>
         </div>
     </div>
 
     <div class="overlay" v-if="this.showPopUpCreateGroupForm">
         <div class="popup">
-            <button class="close-pop-up-button" @click="openAndClosePopUp">X</button>
+            <button class="button right-position" @click="openAndClosePopUp">X</button>
             <h2>Neue Gruppe erstellen</h2>
             <form>
                 <label for="groupname">Gruppenname</label>
@@ -377,9 +377,7 @@ export default {
                 <label for="description">Beschreibung</label>
                 <textarea id="description" name="description" rows="4" v-model="this.description"></textarea>
 
-                <button type="button" class="create-new-group-button" @click="createNewGroup">
-                    Speichern
-                </button>
+                <button type="button" class="button" @click="createNewGroup">Speichern</button>
             </form>
 
             <div v-if="showGroupMemberContainer">
@@ -396,19 +394,17 @@ export default {
                     </div>
                 </div>
 
-                <button type="button" class="create-new-group-button" @click="addGroupMember">
-                    Speichern
-                </button>
+                <button type="button" class="button" @click="addGroupMember">Speichern</button>
             </div>
 
-            <div class="error-message">{{ this.errorMessage }}</div>
-            <div class="success-message">{{ this.successMessage }}</div>
+            <div class="error-message" v-if="this.errorMessage">{{ this.errorMessage }}</div>
+            <div class="success-message" v-if="this.successMessage">{{ this.successMessage }}</div>
         </div>
     </div>
 
     <div class="overlay" v-if="this.showPopUpEditGroupForm">
         <div class="popup">
-            <button class="close-pop-up-button" @click="openAndCloseEditGroupForm">X</button>
+            <button class="button right-position" @click="openAndCloseEditGroupForm">X</button>
             <h2>Gruppe bearbeiten</h2>
             <form>
                 <label for="groupname">Gruppenname</label>
@@ -422,9 +418,7 @@ export default {
                     v-model="this.newDescription"
                 ></textarea>
 
-                <button type="button" class="create-new-group-button" @click="changeGroupdata">
-                    Speichern
-                </button>
+                <button type="button" class="button" @click="changeGroupdata">Speichern</button>
             </form>
 
             <h2>Mitglieder hinzufügen</h2>
@@ -440,11 +434,9 @@ export default {
                 </div>
             </div>
 
-            <button type="button" class="create-new-group-button" @click="changeGroupMember">
-                Speichern
-            </button>
-            <div class="error-message">{{ this.errorMessage }}</div>
-            <div class="success-message">{{ this.successMessage }}</div>
+            <button type="button" class="button" @click="changeGroupMember">Speichern</button>
+            <div class="error-message" v-if="this.errorMessage">{{ this.errorMessage }}</div>
+            <div class="success-message" v-if="this.successMessage">{{ this.successMessage }}</div>
         </div>
     </div>
 </template>
@@ -501,19 +493,6 @@ export default {
 
 .no-group-found-container {
     width: 350px;
-}
-
-.group-button {
-    font-weight: var(--font-weight-bold);
-    padding: 10px;
-    background-color: var(--grey);
-    color: var(--black);
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: var(--font-size-small-text);
-    text-align: center;
-    text-decoration: none;
 }
 
 .new-group-card {

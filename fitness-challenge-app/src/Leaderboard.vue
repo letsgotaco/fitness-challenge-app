@@ -111,7 +111,7 @@ export default {
 
 <template>
     <div class="table-container">
-        <span class="error-message">{{ this.errorMessage }}</span>
+        <span class="error-message" v-if="this.errorMessage">{{ this.errorMessage }}</span>
 
         <div class="table-header" v-if="this.errorMessage.length === 0">
             <span>Teilnehmer</span>

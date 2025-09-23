@@ -17,16 +17,10 @@
     --black: #000000;
     --black-transparent: rgba(0, 0, 0, 0.499);
     --black-transparent-2: rgba(0, 0, 0, 0.1);
-    --red: #ff0000;
-
-    /* font-sizes */
-    --font-size-big-text: 24px;
-    --font-size-text: 19px;
-    --font-size-small-text: 16px;
-
-    /* font-weight */
-    --font-weight-bold: 900;
-    --font-weight-normal: 400;
+    --red: #721c24;
+    --red-2: #f8d7da;
+    --green: #155724;
+    --green-2: #d4edda;
 }
 
 body {
@@ -57,15 +51,19 @@ h3 {
 }
 
 .error-message {
-    font-size: var(--font-size-text);
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    background: var(--red-2);
     color: var(--red);
-    padding-top: 20px;
 }
 
 .success-message {
-    font-size: var(--font-size-text);
-    color: var(--light-blue);
-    padding-top: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    background: var(--green-2);
+    color: var(--green);
 }
 
 textarea {
@@ -105,7 +103,6 @@ textarea {
     font-size: var(--font-size-small-text);
 }
 
-.popup button,
 .router-link {
     padding: 10px 15px;
     border: none;
@@ -123,5 +120,53 @@ textarea {
 
 .no-pointer-events {
     pointer-events: none;
+}
+
+.button-2 {
+    padding: 10px 15px;
+    border: 1px solid var(--grey);
+    border-radius: 8px;
+    background: var(--grey);
+    color: var(--black);
+    font-size: var(--font-size-small-text);
+    cursor: pointer;
+    margin-top: 15px;
+    width: fit-content;
+    transition: all 0.3s ease;
+}
+
+.button-2:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--black-transparent-2);
+}
+
+.button {
+    padding: 10px 15px;
+    border: 1px solid var(--grey);
+    border-radius: 8px;
+    background: linear-gradient(to bottom right, var(--light-blue), var(--light-blue-2));
+    color: var(--white);
+    font-size: var(--font-size-small-text);
+    cursor: pointer;
+    margin-top: 15px;
+    width: fit-content;
+    transition: all 0.3s ease;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--black-transparent-2);
+}
+
+.right-position {
+    margin-left: 90%;
+}
+
+form input:hover,
+textarea:hover,
+form textarea:hover {
+    border-color: var(--light-blue);
+    box-shadow: 0 0 5px var(--light-blue-2);
+    transform: translateY(-1px);
 }
 </style>
