@@ -87,7 +87,7 @@ export default {
                 })
                     .then(res => {
                         if (res.ok) {
-                            this.successMessage = 'Nutzer erfolgreich registriert!';
+                            this.successMessage = 'Post erfolgreich erstellt!';
                             this.displayPosts();
                         }
                     })
@@ -113,7 +113,7 @@ export default {
                 })
                     .then(res => {
                         if (res.ok) {
-                            this.successMessagePopUpCreateCommentForm = 'Nutzer erfolgreich registriert!';
+                            this.successMessagePopUpCreateCommentForm = 'Kommentar erfolgreich erstellt!';
                             this.displayPosts();
                         }
                     })

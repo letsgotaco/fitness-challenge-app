@@ -115,6 +115,7 @@ export default {
                         } else {
                             for (let i = 0; i < data.length; i++) {
                                 if (data[i].email === this.emailInput) {
+                                    this.successMessage = '';
                                     this.errorMessage = 'Der Nutzer ist schon registriert!';
                                     this.userRegisitered = true;
                                     break;

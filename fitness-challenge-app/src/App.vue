@@ -68,6 +68,7 @@ h3 {
 
 textarea {
     resize: none;
+    font-family: Arial, sans-serif;
 }
 
 .overlay {
