@@ -210,10 +210,13 @@ export default {
                 }
 
                 for (let i = 0; i < data.length; i++) {
+                    let username = await this.getAuthorName(data[i].user_id);
+
                     this.posts.push({
                         post: {
                             id: data[i].post_id,
                             user: data[i].user_id,
+                            author: username,
                             content: data[i].content,
                         },
                         comments: [],
@@ -228,10 +231,13 @@ export default {
                     if (resComments.ok) {
                         const dataComments = await resComments.json();
 
-                        dataComments.forEach(c => {
+                        dataComments.forEach(async c => {
+                            let username = await this.getAuthorName(c.user_id);
+
                             this.posts[i].comments.push({
                                 user: c.user_id,
                                 content: c.content,
+                                author: username,
                                 id: c.comment_id,
                             });
                         });
@@ -281,6 +287,24 @@ export default {
                     console.error(error);
                 });
         },
+        async getAuthorName(userId) {
+            if (Number(this.userId) === userId) {
+                return 'Ich';
+            } else {
+                try {
+                    const res = await fetch(
+                        `http://localhost:3000/getUsername/${encodeURIComponent(userId)}`,
+                    );
+
+                    if (res.ok) {
+                        const data = await res.json();
+                        return data.username;
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+        },
     },
     mounted() {
         this.displayPosts();
@@ -299,10 +323,17 @@ export default {
         </div>
 
         <div class="post-container" v-for="(data, index) in this.posts" :key="index">
-            <p>{{ data.post.content }}</p>
+            <div class="comment-data-container">
+                <p class="post-author">{{ data.post.author }}</p>
+                <p>{{ data.post.content }}</p>
+            </div>
 
             <div v-for="(data, index) in data.comments" :key="index">
-                <p class="comment">{{ data.content }}</p>
+                <div class="comment-data-container">
+                    <p class="comment-author">{{ data.author }}</p>
+                    <p class="comment">{{ data.content }}</p>
+                </div>
+
                 <div class="comment-interactions-container">
                     <button
                         type="button"
@@ -400,6 +431,22 @@ export default {
 </template>
 
 <style scoped>
+.post-author,
+.comment-author {
+    box-shadow: 0 0 15px var(--black-transparent-2);
+    border: 1px solid var(--grey);
+    background: var(--grey);
+    width: fit-content;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.comment-data-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .edit-comment-container,
 .edit-post-container,
 .write-comment-container {
