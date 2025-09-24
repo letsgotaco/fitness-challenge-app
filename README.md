@@ -18,3 +18,12 @@ Um mit der Datenbank eine erfolgreiche Verbindung aufzubauen, führe den folgend
 ```
 node server.js
 ```
+
+## Frontend starten
+
+Starte das Frontend mit den folgenden Befehlen im Terminal:
+
+```
+cd fitness-challenge-app
+npm run dev
+```
