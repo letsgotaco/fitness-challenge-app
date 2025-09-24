@@ -104,17 +104,6 @@ textarea {
     font-size: var(--font-size-small-text);
 }
 
-.router-link {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 8px;
-    background: linear-gradient(to bottom right, var(--light-blue), var(--light-blue-2));
-    color: var(--white);
-    font-size: var(--font-size-small-text);
-    cursor: pointer;
-    margin-bottom: 15px;
-}
-
 .close-pop-up-button {
     margin-left: 90%;
 }
@@ -141,7 +130,8 @@ textarea {
     box-shadow: 0 4px 8px var(--black-transparent-2);
 }
 
-.button {
+.button,
+.router-link {
     padding: 10px 15px;
     border: 1px solid var(--grey);
     border-radius: 8px;
@@ -157,6 +147,10 @@ textarea {
 .button:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px var(--black-transparent-2);
+}
+
+.router-link {
+    text-decoration: none;
 }
 
 .right-position {

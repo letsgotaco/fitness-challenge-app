@@ -251,6 +251,7 @@ export default {
 
             <button type="button" class="button" @click="deleteAccount">Löschen</button>
         </div>
+        <router-link class="router-link" to="/dashboard">Zum Dashboard</router-link>
     </div>
 </template>
 
