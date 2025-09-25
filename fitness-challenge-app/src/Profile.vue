@@ -119,13 +119,14 @@ export default {
                     console.error(error);
                 });
         },
-        validateUserInput() {
+        async validateUserInput() {
             if (
                 this.newEmailInput.length === 0 ||
                 this.newPasswordInput.length === 0 ||
                 this.newUsernameInput.length === 0
             ) {
                 this.errorMessage = 'Bitte fülle alle Felder aus!';
+                this.successMessage = '';
                 this.correctInput = false;
                 return;
             } else {
@@ -136,15 +137,42 @@ export default {
             const emailRegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!this.newEmailInput.match(emailRegExp)) {
                 this.errorMessage = 'Falsches E-Mail Format!';
+                this.successMessage = '';
                 this.correctInput = false;
                 return;
             } else {
                 this.correctInput = true;
                 this.errorMessage = '';
             }
+
+            const res = await fetch('http://localhost:3000/getUser');
+
+            if (res.ok) {
+                const data = await res.json();
+
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].user_id !== Number(this.userId)) {
+                        if (data[i].username === this.newUsernameInput) {
+                            this.errorMessage = 'Der Nutzername existiert schon!';
+                            this.successMessage = '';
+                            this.correctInput = false;
+                            return;
+                        } else if (data[i].email === this.newEmailInput) {
+                            this.errorMessage = 'Die Email-Adresse existiert schon!';
+                            this.successMessage = '';
+                            this.correctInput = false;
+                            return;
+                        }
+                    }
+                }
+            }
+
+            console.log('validateUserInput', this.correctInput);
         },
         async changeLoginData() {
-            this.validateUserInput();
+            await this.validateUserInput();
+
+            console.log('changeLoginInput', this.correctInput);
 
             if (this.correctInput) {
                 let passwordHash = await this.$hashPassword(this.newPasswordInput, 10);
