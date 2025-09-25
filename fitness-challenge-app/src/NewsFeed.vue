@@ -115,6 +115,7 @@ export default {
                         if (res.ok) {
                             this.successMessagePopUpCreateCommentForm = 'Kommentar erfolgreich erstellt!';
                             this.displayPosts();
+                            this.showPopUpCreateCommentForm = false;
                         }
                     })
                     .catch(error => {
@@ -140,6 +141,7 @@ export default {
                         if (res.ok) {
                             this.successMessagePopUpEditPostForm = 'Post erfolgreich abgeändert!';
                             this.displayPosts();
+                            this.showPopUpEditPostForm = false;
                         }
                     })
                     .catch(error => console.error('Fehler:', error));
@@ -163,6 +165,7 @@ export default {
                         if (res.ok) {
                             this.successMessagePopUpEditCommentForm = 'Kommentar erfolgreich abgeändert!';
                             this.displayPosts();
+                            this.showPopUpEditCommentForm = false;
                         }
                     })
                     .catch(error => console.error('Fehler:', error));
@@ -186,6 +189,7 @@ export default {
             }
 
             this.showPopUpEditCommentForm = !this.showPopUpEditCommentForm;
+            this.successMessagePopUpEditCommentForm = '';
         },
         openAndClosePopUpEditPostForm(event) {
             const id = parseInt(event.currentTarget.id);
@@ -195,6 +199,7 @@ export default {
             }
 
             this.showPopUpEditPostForm = !this.showPopUpEditPostForm;
+            this.successMessagePopUpEditPostForm = '';
         },
 
         async displayPosts() {
