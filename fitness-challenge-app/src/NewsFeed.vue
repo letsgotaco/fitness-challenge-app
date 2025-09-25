@@ -452,6 +452,12 @@ export default {
 </template>
 
 <style scoped>
+.right-position {
+    margin-left: 80%;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
 .post-author,
 .comment-author {
     box-shadow: 0 0 15px var(--black-transparent-2);
