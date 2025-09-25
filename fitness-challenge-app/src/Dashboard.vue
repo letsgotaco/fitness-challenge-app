@@ -499,6 +499,7 @@ export default {
     gap: 15px;
     background: linear-gradient(to bottom right, var(--light-blue), var(--light-blue-2));
     font-size: var(--font-size-small-text);
+    max-width: 250px;
 }
 
 .no-group-found-container {
@@ -514,6 +515,7 @@ export default {
     justify-content: space-between;
     gap: 15px;
     box-shadow: 0 0 15px var(--black-transparent-2);
+    max-width: 250px;
 }
 
 .create-group-button {
