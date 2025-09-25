@@ -233,12 +233,14 @@ export default {
         openAndClosePopUpEditChallengeForm(event) {
             // Stop event from bubbling up to parent container, where popup is triggered
             event.stopPropagation();
+            this.successMessageEditChallengeForm = '';
 
             this.showPopUpEditChallengeForm = !this.showPopUpEditChallengeForm;
             let id = event.target.dataset.challengeid;
 
             if (id !== undefined) {
                 this.editedChallengeId = Number(id);
+                this.prefillEditChallengeForm(this.editedChallengeId);
             }
         },
         validateUserInputEditChallengeForm() {
@@ -280,6 +282,16 @@ export default {
                         }
                     })
                     .catch(error => console.error('Fehler:', error));
+            }
+        },
+        prefillEditChallengeForm(challengeId) {
+            const challenge = this.challenges.find(c => c.challenge_id === challengeId);
+
+            if (challenge) {
+                this.newChallengeTitle = challenge.title;
+                this.newChallengeDescription = challenge.description;
+                this.newChallengeGoal = challenge.target;
+                this.newDeadline = challenge.end_date.slice(0, 10);
             }
         },
     },
