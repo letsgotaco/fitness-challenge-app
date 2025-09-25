@@ -180,6 +180,10 @@ export default {
 
             this.showPopUpCreateCommentForm = !this.showPopUpCreateCommentForm;
             this.successMessagePopUpCreateCommentForm = '';
+
+            if (this.contentComment.length > 0) {
+                this.contentComment = '';
+            }
         },
         openAndClosePopUpEditCommentForm(event) {
             const id = parseInt(event.currentTarget.id);
@@ -190,6 +194,10 @@ export default {
 
             this.showPopUpEditCommentForm = !this.showPopUpEditCommentForm;
             this.successMessagePopUpEditCommentForm = '';
+
+            if (this.contentEditedComment.length > 0) {
+                this.contentEditedComment = '';
+            }
         },
         openAndClosePopUpEditPostForm(event) {
             const id = parseInt(event.currentTarget.id);
@@ -200,6 +208,10 @@ export default {
 
             this.showPopUpEditPostForm = !this.showPopUpEditPostForm;
             this.successMessagePopUpEditPostForm = '';
+
+            if (this.contentEditedPost.length > 0) {
+                this.contentEditedPost = '';
+            }
         },
 
         async displayPosts() {
@@ -509,6 +521,10 @@ export default {
     padding: 12px;
     font-weight: var(--font-weight-normal);
     width: fit-content;
+}
+
+.button {
+    margin: 15px 10px 0 0;
 }
 
 /* Smartphones */
