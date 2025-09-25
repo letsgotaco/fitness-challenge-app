@@ -374,7 +374,7 @@ export default {
             </div>
 
             <button
-                class="button"
+                class="button button-extra-margin"
                 :id="data.post.id"
                 @click="deletePost"
                 v-if="data.post.user === Number(this.userId)"
@@ -382,14 +382,18 @@ export default {
                 Löschen
             </button>
             <button
-                class="button"
+                class="button button-extra-margin"
                 :id="data.post.id"
                 @click="openAndClosePopUpEditPostForm"
                 v-if="data.post.user === Number(this.userId)"
             >
                 Bearbeiten
             </button>
-            <button class="button" @click="openAndClosePopUpCreateCommentForm" :id="data.post.id">
+            <button
+                class="button button-extra-margin"
+                @click="openAndClosePopUpCreateCommentForm"
+                :id="data.post.id"
+            >
                 Kommentieren
             </button>
         </div>
@@ -523,7 +527,7 @@ export default {
     width: fit-content;
 }
 
-.button {
+.button-extra-margin {
     margin: 15px 10px 0 0;
 }
 
