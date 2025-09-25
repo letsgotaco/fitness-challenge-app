@@ -502,6 +502,7 @@ export default {
     border-radius: 8px;
     padding: 10px;
     font-size: var(--font-size-small-text);
+    width: fit-content;
 }
 
 .small-button {
