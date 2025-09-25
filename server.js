@@ -582,6 +582,23 @@ app.patch('/updateChallenge', (req, res) => {
     );
 });
 
+// API-Endpoint to get username with specific user_id
+app.get('/getUsername/:user_id', async (req, res) => {
+    const { user_id } = req.params;
+
+    try {
+        connection.execute('SELECT `username` FROM `User` WHERE `user_id` = ?', [user_id], (err, rows) => {
+            if (err) {
+                console.error(err);
+            } else {
+                res.json(rows[0]);
+            }
+        });
+    } catch (err) {
+        console.error(err);
+    }
+});
+
 app.listen(port, () => {
     console.log('server runs on http://localhost:' + port);
 });

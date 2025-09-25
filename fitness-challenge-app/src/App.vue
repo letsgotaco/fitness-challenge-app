@@ -21,6 +21,15 @@
     --red-2: #f8d7da;
     --green: #155724;
     --green-2: #d4edda;
+
+    /* font-sizes */
+    --font-size-big-text: 24px;
+    --font-size-text: 19px;
+    --font-size-small-text: 16px;
+
+    /* font-weight */
+    --font-weight-bold: 900;
+    --font-weight-normal: 400;
 }
 
 body {
