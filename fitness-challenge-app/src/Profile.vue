@@ -218,11 +218,32 @@ export default {
                     console.error(error);
                 });
         },
+        prefillLoginData() {
+            fetch('http://localhost:3000/getUser')
+                .then(res => {
+                    if (res.ok) {
+                        return res.json();
+                    }
+                })
+                .then(data => {
+                    const user = data.find(u => u.user_id === Number(this.userId));
+                    if (user) {
+                        this.newUsernameInput = user.username;
+                        this.newEmailInput = user.email;
+                        // Due to security reasons the password hash cannot be converted into the actual password. Therefor it is empty
+                        this.newPasswordInput = '';
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        },
     },
     mounted() {
         this.getBadges();
         this.getChallenges();
         this.getUsername();
+        this.prefillLoginData();
     },
 };
 </script>
