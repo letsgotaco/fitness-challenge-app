@@ -599,6 +599,27 @@ app.get('/getUsername/:user_id', async (req, res) => {
     }
 });
 
+// API-Endpoint for private groups member
+app.get('/getPrivateGroupMember/:group_id', async (req, res) => {
+    const { group_id } = req.params;
+
+    try {
+        connection.execute(
+            'SELECT * FROM `Private_Group_Member` WHERE `group_id` = ?',
+            [group_id],
+            (err, rows) => {
+                if (err) {
+                    console.error(err);
+                }
+
+                res.json(rows);
+            },
+        );
+    } catch (err) {
+        console.error(err);
+    }
+});
+
 app.listen(port, () => {
     console.log('server runs on http://localhost:' + port);
 });
