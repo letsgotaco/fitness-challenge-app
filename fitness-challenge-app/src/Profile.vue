@@ -45,7 +45,7 @@ export default {
                                         if (userChallenges[a] === data[i].challenge_id) {
                                             this.challenges.push({
                                                 title: data[i].title,
-                                                deadline: data[i].end_date.slice(0, 10),
+                                                deadline: data[i].end_date,
                                             });
                                         }
                                     }
@@ -166,13 +166,9 @@ export default {
                     }
                 }
             }
-
-            console.log('validateUserInput', this.correctInput);
         },
         async changeLoginData() {
             await this.validateUserInput();
-
-            console.log('changeLoginInput', this.correctInput);
 
             if (this.correctInput) {
                 let passwordHash = await this.$hashPassword(this.newPasswordInput, 10);

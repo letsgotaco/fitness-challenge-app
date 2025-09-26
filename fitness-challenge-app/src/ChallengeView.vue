@@ -291,7 +291,7 @@ export default {
                 this.newChallengeTitle = challenge.title;
                 this.newChallengeDescription = challenge.description;
                 this.newChallengeGoal = challenge.target;
-                this.newDeadline = challenge.end_date.slice(0, 10);
+                this.newDeadline = challenge.end_date;
             }
         },
     },
@@ -323,10 +323,7 @@ export default {
                     >
                     <span class="no-pointer-events">{{ data.description }}</span>
                     <span class="no-pointer-events">{{ data.target }}</span>
-                    <span class="no-pointer-events"
-                        >Endet am {{ data.end_date.slice(0, 10) }} um
-                        {{ data.end_date.slice(11, 16) }} Uhr</span
-                    >
+                    <span class="no-pointer-events">Endet am {{ data.end_date }} </span>
                     <div class="button-container">
                         <button
                             class="button"

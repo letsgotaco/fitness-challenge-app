@@ -14,6 +14,7 @@ let connection = mysql.createConnection({
     user: 'root',
     password: 'password',
     database: 'databank-fitness-challenge-app',
+    dateStrings: true, // Use Dates as Strings therefor JS does not convert into a different time zone
 });
 
 // DO NOT USE: Endpoint to test connectifiy of databank
