@@ -303,13 +303,17 @@ app.get('/getGroupChallenges/:group_id', async (req, res) => {
     const { group_id } = req.params;
 
     try {
-        connection.execute('SELECT * FROM `Challenge` WHERE group_id = ?', [group_id], (err, rows) => {
-            if (err) {
-                console.error(err);
-            }
+        connection.execute(
+            'SELECT * FROM `Challenge` WHERE `group_id` = ? AND `end_date` >= CURDATE()',
+            [group_id],
+            (err, rows) => {
+                if (err) {
+                    console.error(err);
+                }
 
-            res.json(rows);
-        });
+                res.json(rows);
+            },
+        );
     } catch (err) {
         console.error(err);
     }
