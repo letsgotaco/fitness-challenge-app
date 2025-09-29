@@ -7,6 +7,7 @@ export default {
             currentChallengeId: 0,
             currentChallengeName: '',
             currentChallengeDescription: '',
+            currentChallengeGoal: '',
             correctInput: true,
             informationalMessage: '',
             errorMessageCreateChallengeForm: '',
@@ -35,95 +36,123 @@ export default {
     },
     methods: {
         validateUserInputCreateChallengeForm() {
-            if (
-                this.challengeTitle.length === 0 ||
-                this.challengeDescription.length === 0 ||
-                this.challengeGoal.length === 0 ||
-                this.deadline.length === 0
-            ) {
-                this.errorMessageCreateChallengeForm = 'Bitte fülle alle Felder aus!';
+            if (this.challengeTitle.length === 0) {
+                this.errorMessageCreateChallengeForm = 'Bitte fülle den Titel aus!';
                 this.correctInput = false;
                 return;
-            } else {
-                this.correctInput = true;
-                this.errorMessageCreateChallengeForm = '';
             }
+            if (this.challengeDescription.length === 0) {
+                this.errorMessageCreateChallengeForm = 'Bitte fülle die Beschreibung aus!';
+                this.correctInput = false;
+                return;
+            }
+            if (this.challengeGoal.length === 0) {
+                this.errorMessageCreateChallengeForm = 'Bitte fülle das Ziel aus!';
+                this.correctInput = false;
+                return;
+            } else if (!this.challengeGoal.match(/^-?\d+(\.\d+)?$/) || parseFloat(this.challengeGoal) <= 0) {
+                this.errorMessageCreateChallengeForm = 'Gebe bitte eine positive Zahl als Ziel an!';
+                this.correctInput = false;
+                return;
+            }
+            if (this.deadline.length === 0) {
+                this.errorMessageCreateChallengeForm = 'Bitte wähle ein Enddatum aus!';
+                this.correctInput = false;
+                return;
+            }
+            this.correctInput = true;
+            this.errorMessageCreateChallengeForm = '';
         },
         createNewChallenge() {
-            this.validateUserInputCreateChallengeForm();
-
-            if (this.correctInput) {
-                fetch('http://localhost:3000/createChallenge', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        group_id: this.groupId,
-                        title: this.challengeTitle,
-                        description: this.challengeDescription,
-                        target: this.challengeGoal,
-                        end_date: this.deadline,
-                        created_by: this.userId,
-                    }),
+            fetch('http://localhost:3000/createChallenge', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    group_id: this.groupId,
+                    title: this.challengeTitle,
+                    description: this.challengeDescription,
+                    target: this.challengeGoal,
+                    end_date: this.deadline,
+                    created_by: this.userId,
+                }),
+            })
+                .then(res => {
+                    if (res.ok) {
+                        this.successMessageCreateChallengeForm = 'Challenge erfolgreich erstellt!';
+                        this.displayChallenges();
+                        // Clear form fields
+                        this.challengeTitle = '';
+                        this.challengeDescription = '';
+                        this.challengeGoal = '';
+                        this.deadline = '';
+                        return res.json();
+                    } else {
+                        this.errorMessageCreateChallengeForm = 'Fehler beim Erstellen der Challenge!';
+                    }
                 })
-                    .then(res => {
-                        if (res.ok) {
-                            this.successMessageCreateChallengeForm = 'Challenge erfolgreich erstellt!';
-                            this.displayChallenges();
-                            return res.json();
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Fehler:', error);
-                    });
-            }
+                .catch(error => {
+                    console.error('Fehler:', error);
+                    this.errorMessageCreateChallengeForm = 'Netzwerkfehler!';
+                });
         },
-        displayChallenges() {
+        async displayChallenges() {
             // Reset Array to not display challenges twice
             this.challenges = [];
 
-            fetch(`http://localhost:3000/getGroupChallenges/${encodeURIComponent(parseInt(this.groupId))}`)
-                .then(res => {
-                    if (res.ok) {
-                        return res.json();
-                    }
-                })
-                .then(data => {
+            try {
+                const res = await fetch(`http://localhost:3000/getGroupChallenges/${encodeURIComponent(parseInt(this.groupId))}`);
+                if (res.ok) {
+                    const data = await res.json();
                     if (data.length === 0) {
                         this.informationalMessage = 'Keine Challenges verfügbar!';
                     } else {
                         this.challenges = data;
                         this.informationalMessage = '';
+                        // Add progress to each challenge
+                        for (let i = 0; i < this.challenges.length; i++) {
+                            const progress = await this.getUserProgressForChallenge(this.challenges[i].challenge_id);
+                            this.challenges[i].progress = progress;
+                        }
                     }
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async getUserProgressForChallenge(challengeId) {
+            try {
+                const res = await fetch(`http://localhost:3000/getUserProgress/${encodeURIComponent(this.userId)}/${encodeURIComponent(challengeId)}`);
+                const data = await res.json();
+                return data.length > 0 ? data[0].total_progress : 0;
+            } catch (error) {
+                console.error(error);
+                return 0;
+            }
         },
         async toggleProgressForm(event) {
             this.showProgressForm = !this.showProgressForm;
             this.currentChallengeId = event.target.id;
             this.currentChallengeName = event.target.dataset.challengename;
             this.currentChallengeDescription = event.target.dataset.challengedescription;
+            this.currentChallengeGoal = event.target.dataset.challengegoal;
 
             if (this.showProgressForm) {
                 let totalUserProgress = await this.CheckUserProgress();
 
-                if (totalUserProgress === '100%') {
+                if (totalUserProgress >= 100) {
                     this.$refs.saveProgressButton.disabled = true;
                 }
             }
         },
         validateUserInputProgressForm() {
-            const regExpPercentage = /^(100([.,]0+)?|(\d{1,2}([.,]\d+)?))%$/;
-
             if (this.progress.length === 0) {
-                this.errorMessageProgressForm = 'Bitte fülle alle Felder aus!';
+                this.errorMessageProgressForm = 'Bitte fülle das Feld aus!';
                 this.correctInputProgressForm = false;
                 return;
-            } else if (!this.progress.match(regExpPercentage)) {
-                this.errorMessageProgressForm = 'Gebe bitte einen Prozentwert an!';
+            } else if (!this.progress.match(/^-?\d+(\.\d+)?$/)) {
+                this.errorMessageProgressForm = 'Gebe bitte eine Zahl als Fortschritt an!';
                 this.correctInputProgressForm = false;
                 return;
             } else {
@@ -131,32 +160,44 @@ export default {
                 this.errorMessageProgressForm = '';
             }
         },
+        calculateProgressPercentage(progressInput, goalInput) {
+            const progressNum = parseFloat(progressInput);
+            const goalNum = parseFloat(goalInput);
+            if (goalNum <= 0) return 0;
+            return Math.round((progressNum / goalNum) * 10000) / 100;
+        },
         async saveChallengeProgress() {
-            this.validateUserInputProgressForm();
+            const currentPercent = await this.CheckUserProgress();
+            const currentAbsolute = (currentPercent / 100) * this.currentChallengeGoal;
+            const newAbsolute = currentAbsolute + parseFloat(this.progress);
+            const newPercent = (newAbsolute / this.currentChallengeGoal) * 100;
+            const percentage = Math.round(newPercent * 100) / 100; // 2 Dezimalen
 
-            if (this.correctInputProgressForm) {
-                fetch('http://localhost:3000/addProgress', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        challenge_id: this.currentChallengeId,
-                        user_id: this.userId,
-                        total_progress: this.progress,
-                    }),
+            fetch('http://localhost:3000/addProgress', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    challenge_id: this.currentChallengeId,
+                    user_id: this.userId,
+                    total_progress: percentage,
+                }),
+            })
+                .then(res => {
+                    if (res.ok) {
+                        this.successMessageProgressForm = 'Fortschritt gespeichert!';
+                        this.displayChallenges(); // Refresh to update colors immediately
+                    } else {
+                        this.errorMessageProgressForm = 'Fehler beim Speichern des Fortschritts!';
+                    }
                 })
-                    .then(res => {
-                        if (res.ok) {
-                            this.successMessageProgressForm = 'Fortschritt gespeichert!';
-                        }
-                    })
-                    .catch(error => {
-                        console.error(error);
-                    });
-            }
+                .catch(error => {
+                    console.error(error);
+                    this.errorMessageProgressForm = 'Netzwerkfehler!';
+                });
 
-            if (this.progress === '100%') {
+            if (percentage >= 100) {
                 // Create new Badge for challenge, if it doesnt exist
                 fetch('http://localhost:3000/createBadge', {
                     method: 'POST',
@@ -199,10 +240,12 @@ export default {
                 const data = await res.json();
                 if (data.length > 0) {
                     return data[0].total_progress;
+                } else {
+                    return 0;
                 }
             } catch (error) {
                 console.error(error);
-                return;
+                return 0;
             }
         },
 
@@ -224,10 +267,13 @@ export default {
                 .then(res => {
                     if (res.ok) {
                         this.displayChallenges();
+                    } else {
+                        alert('Fehler beim Löschen der Challenge!');
                     }
                 })
                 .catch(error => {
                     console.error(error);
+                    alert('Netzwerkfehler beim Löschen!');
                 });
         },
         openAndClosePopUpEditChallengeForm(event) {
@@ -244,45 +290,59 @@ export default {
             }
         },
         validateUserInputEditChallengeForm() {
-            if (
-                this.newChallengeTitle.length === 0 ||
-                this.newChallengeDescription.length === 0 ||
-                this.newChallengeGoal.length === 0 ||
-                this.newDeadline.length === 0
-            ) {
-                this.errorMessageEditChallengeForm = 'Bitte fülle alle Felder aus!';
+            if (this.newChallengeTitle.length === 0) {
+                this.errorMessageEditChallengeForm = 'Bitte fülle den Titel aus!';
                 this.correctInput2 = false;
                 return;
-            } else {
-                this.correctInput2 = true;
-                this.errorMessageEditChallengeForm = '';
             }
+            if (this.newChallengeDescription.length === 0) {
+                this.errorMessageEditChallengeForm = 'Bitte fülle die Beschreibung aus!';
+                this.correctInput2 = false;
+                return;
+            }
+            if (this.newChallengeGoal.length === 0) {
+                this.errorMessageEditChallengeForm = 'Bitte fülle das Ziel aus!';
+                this.correctInput2 = false;
+                return;
+            } else if (!this.newChallengeGoal.match(/^-?\d+(\.\d+)?$/) || parseFloat(this.newChallengeGoal) <= 0) {
+                this.errorMessageEditChallengeForm = 'Gebe bitte eine positive Zahl als Ziel an!';
+                this.correctInput2 = false;
+                return;
+            }
+            if (this.newDeadline.length === 0) {
+                this.errorMessageEditChallengeForm = 'Bitte wähle ein Enddatum aus!';
+                this.correctInput2 = false;
+                return;
+            }
+            this.correctInput2 = true;
+            this.errorMessageEditChallengeForm = '';
         },
         changeChallengeData() {
-            this.validateUserInputEditChallengeForm();
-
-            if (this.correctInput2) {
-                fetch('http://localhost:3000/updateChallenge', {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        title: this.newChallengeTitle,
-                        description: this.newChallengeDescription,
-                        target: this.newChallengeGoal,
-                        end_date: this.newDeadline,
-                        challenge_id: this.editedChallengeId,
-                    }),
+            fetch('http://localhost:3000/updateChallenge', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title: this.newChallengeTitle,
+                    description: this.newChallengeDescription,
+                    target: this.newChallengeGoal,
+                    end_date: this.newDeadline,
+                    challenge_id: this.editedChallengeId,
+                }),
+            })
+                .then(res => {
+                    if (res.ok) {
+                        this.successMessageEditChallengeForm = 'Daten erfolgreich abgeändert!';
+                        this.displayChallenges();
+                    } else {
+                        this.errorMessageEditChallengeForm = 'Fehler beim Ändern der Challenge!';
+                    }
                 })
-                    .then(res => {
-                        if (res.ok) {
-                            this.successMessageEditChallengeForm = 'Daten erfolgreich abgeändert!';
-                            this.displayChallenges();
-                        }
-                    })
-                    .catch(error => console.error('Fehler:', error));
-            }
+                .catch(error => {
+                    console.error('Fehler:', error);
+                    this.errorMessageEditChallengeForm = 'Netzwerkfehler!';
+                });
         },
         prefillEditChallengeForm(challengeId) {
             const challenge = this.challenges.find(c => c.challenge_id === challengeId);
@@ -291,8 +351,27 @@ export default {
                 this.newChallengeTitle = challenge.title;
                 this.newChallengeDescription = challenge.description;
                 this.newChallengeGoal = challenge.target;
-                this.newDeadline = challenge.end_date;
+                const date = new Date(challenge.end_date);
+                this.newDeadline = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
             }
+        },
+        getChallengeClass(challenge) {
+            const now = new Date();
+            const deadline = new Date(challenge.end_date);
+            deadline.setHours(23, 59, 59, 999);
+            if (challenge.progress >= 100) {
+                return 'completed';
+            } else if (now > deadline) {
+                return 'overdue';
+            }
+            return '';
+        },
+        formatDate(dateString) {
+            const date = new Date(dateString);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}.${month}.${year}`;
         },
     },
     mounted() {
@@ -313,17 +392,19 @@ export default {
                     class="challenge"
                     v-for="(data, index) in this.challenges"
                     :key="index"
+                    :class="getChallengeClass(data)"
                     @click="toggleProgressForm"
                     :id="data.challenge_id"
                     :data-challengeName="data.title"
                     :data-challengeDescription="data.description"
+                    :data-challengeGoal="data.target"
                 >
                     <span class="no-pointer-events"
                         ><b>{{ data.title }}</b></span
                     >
                     <span class="no-pointer-events">{{ data.description }}</span>
                     <span class="no-pointer-events">{{ data.target }}</span>
-                    <span class="no-pointer-events">Endet am {{ data.end_date }} </span>
+                    <span class="no-pointer-events">Endet am {{ formatDate(data.end_date) }} um 23:59 Uhr</span>
                     <div class="button-container">
                         <button
                             class="button"
@@ -354,7 +435,7 @@ export default {
                 <h3>Fortschritt eintragen</h3>
 
                 <label for="progress">Fortschritt</label>
-                <input type="text" id="progress" name="progress" v-model="this.progress" />
+                <input type="number" id="progress" name="progress" v-model="this.progress" />
 
                 <button ref="saveProgressButton" type="button" class="button" @click="saveChallengeProgress">
                     Speichern
@@ -380,7 +461,7 @@ export default {
         <textarea id="description" name="description" rows="3" v-model="this.challengeDescription"></textarea>
 
         <label for="goal">Ziel</label>
-        <input type="text" id="goal" name="goal" v-model="this.challengeGoal" />
+        <input type="number" id="goal" name="goal" v-model="this.challengeGoal" />
 
         <label for="date">Enddatum</label>
         <input type="date" id="date" name="date" :min="this.currentDate" v-model="this.deadline" />
@@ -412,7 +493,7 @@ export default {
                 ></textarea>
 
                 <label for="goal">Ziel</label>
-                <input type="text" id="goal" name="goal" v-model="this.newChallengeGoal" />
+                <input type="number" id="goal" name="goal" v-model="this.newChallengeGoal" />
 
                 <label for="date">Enddatum</label>
                 <input type="date" id="date" name="date" :min="this.currentDate" v-model="this.newDeadline" />
@@ -465,6 +546,14 @@ export default {
     width: fit-content;
     margin-top: 20px;
     box-shadow: 0 0 15px var(--black-transparent-2);
+}
+
+.completed {
+    background-color: #05ed10;
+}
+
+.overdue {
+    background-color: #ee0909;
 }
 
 form {
