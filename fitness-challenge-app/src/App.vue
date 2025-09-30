@@ -19,8 +19,10 @@
     --black-transparent-2: rgba(0, 0, 0, 0.1);
     --red: #721c24;
     --red-2: #f8d7da;
+    --red-3: #ee0909;
     --green: #155724;
     --green-2: #d4edda;
+    --green-3: #05ed10;
 
     /* font-sizes */
     --font-size-big-text: 24px;
@@ -123,7 +125,7 @@ textarea {
 
 .button-2 {
     padding: 10px 15px;
-    border: 1px solid var(--grey);
+    border: none;
     border-radius: 8px;
     background: var(--grey);
     color: var(--black);
@@ -142,7 +144,7 @@ textarea {
 .button,
 .router-link {
     padding: 10px 15px;
-    border: 1px solid var(--grey);
+    border: none;
     border-radius: 8px;
     background: linear-gradient(to bottom right, var(--light-blue), var(--light-blue-2));
     color: var(--white);

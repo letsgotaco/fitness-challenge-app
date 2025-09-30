@@ -102,7 +102,9 @@ export default {
             this.challenges = [];
 
             try {
-                const res = await fetch(`http://localhost:3000/getGroupChallenges/${encodeURIComponent(parseInt(this.groupId))}`);
+                const res = await fetch(
+                    `http://localhost:3000/getGroupChallenges/${encodeURIComponent(parseInt(this.groupId))}`,
+                );
                 if (res.ok) {
                     const data = await res.json();
                     if (data.length === 0) {
@@ -112,7 +114,9 @@ export default {
                         this.informationalMessage = '';
                         // Add progress to each challenge
                         for (let i = 0; i < this.challenges.length; i++) {
-                            const progress = await this.getUserProgressForChallenge(this.challenges[i].challenge_id);
+                            const progress = await this.getUserProgressForChallenge(
+                                this.challenges[i].challenge_id,
+                            );
                             this.challenges[i].progress = progress;
                         }
                     }
@@ -123,7 +127,9 @@ export default {
         },
         async getUserProgressForChallenge(challengeId) {
             try {
-                const res = await fetch(`http://localhost:3000/getUserProgress/${encodeURIComponent(this.userId)}/${encodeURIComponent(challengeId)}`);
+                const res = await fetch(
+                    `http://localhost:3000/getUserProgress/${encodeURIComponent(this.userId)}/${encodeURIComponent(challengeId)}`,
+                );
                 const data = await res.json();
                 return data.length > 0 ? data[0].total_progress : 0;
             } catch (error) {
@@ -173,6 +179,14 @@ export default {
             const newPercent = (newAbsolute / this.currentChallengeGoal) * 100;
             const percentage = Math.round(newPercent * 100) / 100; // 2 Dezimalen
 
+            if (percentage > 100) {
+                this.errorMessageProgressForm = 'Dein Fortschritt darf nicht höher wie die Eingabe sein!';
+                return;
+            } else if (percentage <= 0) {
+                this.errorMessageProgressForm = 'Dein Fortschritt muss größer als 0 sein!';
+                return;
+            }
+
             fetch('http://localhost:3000/addProgress', {
                 method: 'POST',
                 headers: {
@@ -187,6 +201,7 @@ export default {
                 .then(res => {
                     if (res.ok) {
                         this.successMessageProgressForm = 'Fortschritt gespeichert!';
+                        this.errorMessageProgressForm = '';
                         this.displayChallenges(); // Refresh to update colors immediately
                     } else {
                         this.errorMessageProgressForm = 'Fehler beim Speichern des Fortschritts!';
@@ -304,7 +319,10 @@ export default {
                 this.errorMessageEditChallengeForm = 'Bitte fülle das Ziel aus!';
                 this.correctInput2 = false;
                 return;
-            } else if (!this.newChallengeGoal.match(/^-?\d+(\.\d+)?$/) || parseFloat(this.newChallengeGoal) <= 0) {
+            } else if (
+                !this.newChallengeGoal.match(/^-?\d+(\.\d+)?$/) ||
+                parseFloat(this.newChallengeGoal) <= 0
+            ) {
                 this.errorMessageEditChallengeForm = 'Gebe bitte eine positive Zahl als Ziel an!';
                 this.correctInput2 = false;
                 return;
@@ -352,7 +370,12 @@ export default {
                 this.newChallengeDescription = challenge.description;
                 this.newChallengeGoal = challenge.target;
                 const date = new Date(challenge.end_date);
-                this.newDeadline = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+                this.newDeadline =
+                    date.getFullYear() +
+                    '-' +
+                    String(date.getMonth() + 1).padStart(2, '0') +
+                    '-' +
+                    String(date.getDate()).padStart(2, '0');
             }
         },
         getChallengeClass(challenge) {
@@ -404,7 +427,9 @@ export default {
                     >
                     <span class="no-pointer-events">{{ data.description }}</span>
                     <span class="no-pointer-events">{{ data.target }}</span>
-                    <span class="no-pointer-events">Endet am {{ formatDate(data.end_date) }} um 23:59 Uhr</span>
+                    <span class="no-pointer-events"
+                        >Endet am {{ formatDate(data.end_date) }} um 23:59 Uhr</span
+                    >
                     <div class="button-container">
                         <button
                             class="button"
@@ -549,11 +574,11 @@ export default {
 }
 
 .completed {
-    background-color: #05ed10;
+    background-color: var(--green-3);
 }
 
 .overdue {
-    background-color: #ee0909;
+    background-color: var(--red-3);
 }
 
 form {
