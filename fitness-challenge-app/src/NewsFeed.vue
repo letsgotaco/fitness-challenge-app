@@ -336,7 +336,7 @@ export default {
             <textarea class="textarea" rows="4" v-model="this.contentPost"></textarea>
             <button class="button" @click="postNewsFeed">Posten</button>
             <div class="error-message" v-if="this.errorMessage">{{ this.errorMessage }}</div>
-            <div class="success-message" v-if="this.successMessage">{{ this.successMessage }}</div>
+            <div class="success-message fade-out" v-if="this.successMessage">{{ this.successMessage }}</div>
         </div>
 
         <div class="post-container" v-for="(data, index) in this.posts" :key="index">

@@ -163,14 +163,15 @@ export default {
             }
         },
         validateUserInputProgressForm() {
-            const numberRegex = /^-?\d+(\.\d+)?$/;
+            const numberRegex = /^(?:[1-9][0-9]*)(?:[.,][0-9]+)?$/;
 
             if (this.progress.length === 0) {
                 this.errorMessageProgressForm = 'Bitte fülle das Feld aus!';
                 this.correctInputProgressForm = false;
                 return;
             } else if (!String(this.progress).match(numberRegex)) {
-                this.errorMessageProgressForm = 'Gebe bitte eine Zahl als Fortschritt an!';
+                this.errorMessageProgressForm =
+                    'Gebe bitte eine positive Zahl größer gleich 1 als Fortschritt an!';
                 this.correctInputProgressForm = false;
                 return;
             } else {
@@ -190,14 +191,6 @@ export default {
             const newAbsolute = currentAbsolute + parseFloat(this.progress);
             const newPercent = (newAbsolute / this.currentChallengeGoal) * 100;
             const percentage = Math.round(newPercent * 100) / 100; // 2 Dezimalen
-
-            if (percentage > 100) {
-                this.errorMessageProgressForm = 'Dein Fortschritt darf nicht höher wie die Eingabe sein!';
-                return;
-            } else if (percentage <= 0) {
-                this.errorMessageProgressForm = 'Dein Fortschritt muss größer als 0 sein!';
-                return;
-            }
 
             this.validateUserInputProgressForm();
 
@@ -519,7 +512,7 @@ export default {
         <div class="error-message" v-if="this.errorMessageCreateChallengeForm">
             {{ this.errorMessageCreateChallengeForm }}
         </div>
-        <div class="success-message" v-if="this.successMessageCreateChallengeForm">
+        <div class="success-message fade-out" v-if="this.successMessageCreateChallengeForm">
             {{ this.successMessageCreateChallengeForm }}
         </div>
     </form>

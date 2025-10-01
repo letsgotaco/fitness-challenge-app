@@ -111,7 +111,7 @@ app.get('/getChallenges/:user_id', async (req, res) => {
 
     try {
         connection.execute(
-            "SELECT * FROM Challenge_Participant WHERE user_id = ? AND total_progress = '100'",
+            "SELECT * FROM Challenge_Participant WHERE user_id = ? AND total_progress >= '100'",
             [user_id],
             (err, rows) => {
                 if (err) {
