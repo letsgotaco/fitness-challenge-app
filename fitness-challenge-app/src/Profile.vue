@@ -45,7 +45,7 @@ export default {
                                         if (userChallenges[a] === data[i].challenge_id) {
                                             this.challenges.push({
                                                 title: data[i].title,
-                                                deadline: data[i].end_date.slice(0, 10),
+                                                deadline: data[i].end_date,
                                             });
                                         }
                                     }
@@ -119,13 +119,14 @@ export default {
                     console.error(error);
                 });
         },
-        validateUserInput() {
+        async validateUserInput() {
             if (
                 this.newEmailInput.length === 0 ||
                 this.newPasswordInput.length === 0 ||
                 this.newUsernameInput.length === 0
             ) {
                 this.errorMessage = 'Bitte fülle alle Felder aus!';
+                this.successMessage = '';
                 this.correctInput = false;
                 return;
             } else {
@@ -136,15 +137,38 @@ export default {
             const emailRegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!this.newEmailInput.match(emailRegExp)) {
                 this.errorMessage = 'Falsches E-Mail Format!';
+                this.successMessage = '';
                 this.correctInput = false;
                 return;
             } else {
                 this.correctInput = true;
                 this.errorMessage = '';
             }
+
+            const res = await fetch('http://localhost:3000/getUser');
+
+            if (res.ok) {
+                const data = await res.json();
+
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].user_id !== Number(this.userId)) {
+                        if (data[i].username === this.newUsernameInput) {
+                            this.errorMessage = 'Der Nutzername existiert schon!';
+                            this.successMessage = '';
+                            this.correctInput = false;
+                            return;
+                        } else if (data[i].email === this.newEmailInput) {
+                            this.errorMessage = 'Die Email-Adresse existiert schon!';
+                            this.successMessage = '';
+                            this.correctInput = false;
+                            return;
+                        }
+                    }
+                }
+            }
         },
         async changeLoginData() {
-            this.validateUserInput();
+            await this.validateUserInput();
 
             if (this.correctInput) {
                 let passwordHash = await this.$hashPassword(this.newPasswordInput, 10);
@@ -190,11 +214,32 @@ export default {
                     console.error(error);
                 });
         },
+        prefillLoginData() {
+            fetch('http://localhost:3000/getUser')
+                .then(res => {
+                    if (res.ok) {
+                        return res.json();
+                    }
+                })
+                .then(data => {
+                    const user = data.find(u => u.user_id === Number(this.userId));
+                    if (user) {
+                        this.newUsernameInput = user.username;
+                        this.newEmailInput = user.email;
+                        // Due to security reasons the password hash cannot be converted into the actual password. Therefor it is empty
+                        this.newPasswordInput = '';
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        },
     },
     mounted() {
         this.getBadges();
         this.getChallenges();
         this.getUsername();
+        this.prefillLoginData();
     },
 };
 </script>

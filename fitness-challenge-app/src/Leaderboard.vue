@@ -95,8 +95,8 @@ export default {
         },
         sortLeaderboardByProgress(data) {
             const sortedLeaderboardData = [...data].sort((a, b) => {
-                const progressA = parseFloat(a.totalProgress.replace('%', ''));
-                const progressB = parseFloat(b.totalProgress.replace('%', ''));
+                const progressA = parseFloat(a.totalProgress);
+                const progressB = parseFloat(b.totalProgress);
                 return progressB - progressA;
             });
 
@@ -115,15 +115,15 @@ export default {
 
         <div class="table-header" v-if="this.errorMessage.length === 0">
             <span>Teilnehmer</span>
-            <span>Fortschritt</span>
-            <span>Challenge</span>
+            <span class="right-align">Fortschritt</span>
+            <span class="right-align">Challenge</span>
         </div>
 
         <div v-if="this.errorMessage.length === 0">
             <div class="table-row" v-for="(data, index) in this.leaderboardData" :key="index">
                 <span>{{ data.participanname }}</span>
-                <span>{{ data.totalProgress }}</span>
-                <span>{{ data.challenge }}</span>
+                <span class="right-align">{{ data.totalProgress }}%</span>
+                <span class="right-align">{{ data.challenge }}</span>
             </div>
         </div>
     </div>
@@ -140,9 +140,9 @@ export default {
 
 .table-header,
 .table-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
     align-items: center;
-    justify-content: space-between;
     padding: 16px 20px;
 }
 
@@ -154,5 +154,9 @@ export default {
 
 .table-row {
     border-bottom: 1px solid var(--grey);
+}
+
+.right-align {
+    text-align: right;
 }
 </style>

@@ -115,6 +115,7 @@ export default {
                         if (res.ok) {
                             this.successMessagePopUpCreateCommentForm = 'Kommentar erfolgreich erstellt!';
                             this.displayPosts();
+                            this.showPopUpCreateCommentForm = false;
                         }
                     })
                     .catch(error => {
@@ -140,6 +141,7 @@ export default {
                         if (res.ok) {
                             this.successMessagePopUpEditPostForm = 'Post erfolgreich abgeändert!';
                             this.displayPosts();
+                            this.showPopUpEditPostForm = false;
                         }
                     })
                     .catch(error => console.error('Fehler:', error));
@@ -163,6 +165,7 @@ export default {
                         if (res.ok) {
                             this.successMessagePopUpEditCommentForm = 'Kommentar erfolgreich abgeändert!';
                             this.displayPosts();
+                            this.showPopUpEditCommentForm = false;
                         }
                     })
                     .catch(error => console.error('Fehler:', error));
@@ -177,6 +180,10 @@ export default {
 
             this.showPopUpCreateCommentForm = !this.showPopUpCreateCommentForm;
             this.successMessagePopUpCreateCommentForm = '';
+
+            if (this.contentComment.length > 0) {
+                this.contentComment = '';
+            }
         },
         openAndClosePopUpEditCommentForm(event) {
             const id = parseInt(event.currentTarget.id);
@@ -186,6 +193,11 @@ export default {
             }
 
             this.showPopUpEditCommentForm = !this.showPopUpEditCommentForm;
+            this.successMessagePopUpEditCommentForm = '';
+
+            if (this.contentEditedComment.length > 0) {
+                this.contentEditedComment = '';
+            }
         },
         openAndClosePopUpEditPostForm(event) {
             const id = parseInt(event.currentTarget.id);
@@ -195,6 +207,11 @@ export default {
             }
 
             this.showPopUpEditPostForm = !this.showPopUpEditPostForm;
+            this.successMessagePopUpEditPostForm = '';
+
+            if (this.contentEditedPost.length > 0) {
+                this.contentEditedPost = '';
+            }
         },
 
         async displayPosts() {
@@ -319,7 +336,7 @@ export default {
             <textarea class="textarea" rows="4" v-model="this.contentPost"></textarea>
             <button class="button" @click="postNewsFeed">Posten</button>
             <div class="error-message" v-if="this.errorMessage">{{ this.errorMessage }}</div>
-            <div class="success-message" v-if="this.successMessage">{{ this.successMessage }}</div>
+            <div class="success-message fade-out" v-if="this.successMessage">{{ this.successMessage }}</div>
         </div>
 
         <div class="post-container" v-for="(data, index) in this.posts" :key="index">
@@ -357,7 +374,7 @@ export default {
             </div>
 
             <button
-                class="button"
+                class="button button-extra-margin"
                 :id="data.post.id"
                 @click="deletePost"
                 v-if="data.post.user === Number(this.userId)"
@@ -365,14 +382,18 @@ export default {
                 Löschen
             </button>
             <button
-                class="button"
+                class="button button-extra-margin"
                 :id="data.post.id"
                 @click="openAndClosePopUpEditPostForm"
                 v-if="data.post.user === Number(this.userId)"
             >
                 Bearbeiten
             </button>
-            <button class="button" @click="openAndClosePopUpCreateCommentForm" :id="data.post.id">
+            <button
+                class="button button-extra-margin"
+                @click="openAndClosePopUpCreateCommentForm"
+                :id="data.post.id"
+            >
                 Kommentieren
             </button>
         </div>
@@ -431,6 +452,12 @@ export default {
 </template>
 
 <style scoped>
+.right-position {
+    margin-left: 80%;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
 .post-author,
 .comment-author {
     box-shadow: 0 0 15px var(--black-transparent-2);
@@ -481,6 +508,7 @@ export default {
     border-radius: 8px;
     padding: 10px;
     font-size: var(--font-size-small-text);
+    width: fit-content;
 }
 
 .small-button {
@@ -504,6 +532,10 @@ export default {
     padding: 12px;
     font-weight: var(--font-weight-normal);
     width: fit-content;
+}
+
+.button-extra-margin {
+    margin: 15px 10px 0 0;
 }
 
 /* Smartphones */

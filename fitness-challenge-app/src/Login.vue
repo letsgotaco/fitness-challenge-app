@@ -68,8 +68,6 @@ export default {
 
                         if (!this.userAccountExistend) {
                             this.errorMessage = 'Nutzer existiert nicht!';
-                        } else {
-                            this.errorMessage = '';
                         }
                     })
                     .catch(error => {
@@ -164,7 +162,7 @@ export default {
                         if (result) {
                             this.successMessage = 'Du wirst eingeloggt!';
                         } else {
-                            this.successMessage = 'Falsches Passwort!';
+                            this.errorMessage = 'Falsches Passwort!';
                         }
                         resolve(result);
                     }

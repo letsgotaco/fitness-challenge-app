@@ -14,6 +14,7 @@ let connection = mysql.createConnection({
     user: 'root',
     password: 'password',
     database: 'databank-fitness-challenge-app',
+    dateStrings: true, // Use Dates as Strings therefor JS does not convert into a different time zone
 });
 
 // DO NOT USE: Endpoint to test connectifiy of databank
@@ -110,7 +111,7 @@ app.get('/getChallenges/:user_id', async (req, res) => {
 
     try {
         connection.execute(
-            "SELECT * FROM Challenge_Participant WHERE user_id = ? AND total_progress = '100%'",
+            "SELECT * FROM Challenge_Participant WHERE user_id = ? AND total_progress >= '100'",
             [user_id],
             (err, rows) => {
                 if (err) {
@@ -302,13 +303,17 @@ app.get('/getGroupChallenges/:group_id', async (req, res) => {
     const { group_id } = req.params;
 
     try {
-        connection.execute('SELECT * FROM `Challenge` WHERE group_id = ?', [group_id], (err, rows) => {
-            if (err) {
-                console.error(err);
-            }
+        connection.execute(
+            'SELECT * FROM `Challenge` WHERE `group_id` = ? AND `end_date` >= CURDATE()',
+            [group_id],
+            (err, rows) => {
+                if (err) {
+                    console.error(err);
+                }
 
-            res.json(rows);
-        });
+                res.json(rows);
+            },
+        );
     } catch (err) {
         console.error(err);
     }
@@ -594,6 +599,27 @@ app.get('/getUsername/:user_id', async (req, res) => {
                 res.json(rows[0]);
             }
         });
+    } catch (err) {
+        console.error(err);
+    }
+});
+
+// API-Endpoint for private groups member
+app.get('/getPrivateGroupMember/:group_id', async (req, res) => {
+    const { group_id } = req.params;
+
+    try {
+        connection.execute(
+            'SELECT * FROM `Private_Group_Member` WHERE `group_id` = ?',
+            [group_id],
+            (err, rows) => {
+                if (err) {
+                    console.error(err);
+                }
+
+                res.json(rows);
+            },
+        );
     } catch (err) {
         console.error(err);
     }

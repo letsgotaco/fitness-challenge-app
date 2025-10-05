@@ -11,7 +11,7 @@
     /* colors */
     --white: #f9f9f9;
     --grey: #ddd;
-    --grey-2: #e7edff;
+    --grey-2: #d5ddf7;
     --light-blue: #38bdf8;
     --light-blue-2: #3b82f6;
     --black: #000000;
@@ -19,8 +19,10 @@
     --black-transparent-2: rgba(0, 0, 0, 0.1);
     --red: #721c24;
     --red-2: #f8d7da;
+    --red-3: #ee0909;
     --green: #155724;
     --green-2: #d4edda;
+    --green-3: #98ebab;
 
     /* font-sizes */
     --font-size-big-text: 24px;
@@ -123,7 +125,7 @@ textarea {
 
 .button-2 {
     padding: 10px 15px;
-    border: 1px solid var(--grey);
+    border: none;
     border-radius: 8px;
     background: var(--grey);
     color: var(--black);
@@ -142,7 +144,7 @@ textarea {
 .button,
 .router-link {
     padding: 10px 15px;
-    border: 1px solid var(--grey);
+    border: none;
     border-radius: 8px;
     background: linear-gradient(to bottom right, var(--light-blue), var(--light-blue-2));
     color: var(--white);
@@ -172,6 +174,20 @@ form textarea:hover {
     border-color: var(--light-blue);
     box-shadow: 0 0 5px var(--light-blue-2);
     transform: translateY(-1px);
+}
+
+.fade-out {
+    animation: fadeOut 1s ease forwards;
+    animation-delay: 5s;
+}
+
+@keyframes fadeOut {
+    from {
+        visibility: visible;
+    }
+    to {
+        visibility: hidden;
+    }
 }
 
 /* Smartphones */

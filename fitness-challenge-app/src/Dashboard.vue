@@ -111,6 +111,7 @@ export default {
             if (this.showPopUpEditGroupForm) {
                 this.getPossibleGroupMember();
                 this.editedGroupId = event.target.id;
+                this.prefillEditGroupForm();
             }
         },
         validateUserInputCreateGroupForm() {
@@ -239,6 +240,30 @@ export default {
                     if (this.groupMember.length === 0) {
                         this.errorMessage = 'Keine Nutzer verfügbar!';
                     }
+
+                    if (this.showPopUpEditGroupForm) {
+                        fetch(
+                            `http://localhost:3000/getPrivateGroupMember/${encodeURIComponent(this.editedGroupId)}`,
+                        )
+                            .then(res => {
+                                if (res.ok) {
+                                    return res.json();
+                                }
+                            })
+                            .then(data => {
+                                for (let i = 0; i < this.groupMember.length; i++) {
+                                    for (let a = 0; a < data.length; a++) {
+                                        if (this.groupMember[i].user_id === data[a].user_id) {
+                                            this.groupMember[i].checked = true;
+                                            this.changedGroupMember.push(this.groupMember[i].user_id);
+                                        }
+                                    }
+                                }
+                            })
+                            .catch(error => {
+                                console.error(error);
+                            });
+                    }
                 })
                 .catch(error => {
                     console.error(error);
@@ -288,6 +313,14 @@ export default {
                 .catch(error => {
                     console.error(error);
                 });
+        },
+        prefillEditGroupForm() {
+            const group = this.groups.find(g => g.id === Number(this.editedGroupId));
+
+            if (group) {
+                this.newGroupname = group.name;
+                this.newDescription = group.description;
+            }
         },
     },
     mounted() {
@@ -432,7 +465,12 @@ export default {
                     :key="index"
                     class="group-member-option-container"
                 >
-                    <input type="checkbox" :value="data.user_id" v-model="this.changedGroupMember" />
+                    <input
+                        type="checkbox"
+                        :value="data.user_id"
+                        :checked="data.checked"
+                        v-model="this.changedGroupMember"
+                    />
                     <span>{{ data.username }}</span>
                 </div>
             </div>
@@ -457,12 +495,6 @@ export default {
     align-items: flex-start;
     flex-direction: column;
     padding: 20px 0 20px 0;
-}
-
-.group-member-option-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .challenge-counter {
@@ -499,6 +531,8 @@ export default {
     gap: 15px;
     background: linear-gradient(to bottom right, var(--light-blue), var(--light-blue-2));
     font-size: var(--font-size-small-text);
+    min-width: 250px;
+    max-width: 400px;
 }
 
 .no-group-found-container {
@@ -514,6 +548,8 @@ export default {
     justify-content: space-between;
     gap: 15px;
     box-shadow: 0 0 15px var(--black-transparent-2);
+    min-width: 250px;
+    max-width: 400px;
 }
 
 .create-group-button {
@@ -525,6 +561,52 @@ export default {
     font-weight: var(--font-weight-bold);
     border-radius: 10px;
     cursor: pointer;
+}
+
+.group-member-option-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 5px 0;
+    cursor: pointer;
+}
+
+.group-member-option-container input[type='checkbox'] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--light-blue);
+    border-radius: 6px;
+    background-color: var(--white);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.group-member-option-container input[type='checkbox']:hover {
+    border-color: var(--light-blue-2);
+    box-shadow: 0 0 4px var(--light-blue-2);
+}
+
+.group-member-option-container input[type='checkbox']:checked {
+    background: linear-gradient(135deg, var(--light-blue), var(--light-blue-2));
+    border-color: var(--light-blue-2);
+}
+
+.group-member-option-container input[type='checkbox']:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -55%);
+    font-size: 14px;
+    color: var(--white);
+    font-weight: var(--font-weight-bold);
+}
+
+.group-member-option-container span {
+    font-size: var(--font-size-small-text);
+    color: var(--black);
 }
 
 /* Smartphones */
