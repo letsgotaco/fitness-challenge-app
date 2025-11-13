@@ -1,0 +1,6 @@
+# Node modules
+node_modules/
+
+# Paket- und Lock-Dateien
+package.json
+package-lock.json
