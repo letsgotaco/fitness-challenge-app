@@ -19,6 +19,7 @@ Im Projektordner des Frontends müssen die folgenden Plugins installiert werden:
 ```
 cd fitness-challenge-app
 npm install -g @vue/cli
+npm install vite
 ```
 
 ## Datenbank starten
